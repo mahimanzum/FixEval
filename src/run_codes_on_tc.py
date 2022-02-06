@@ -103,7 +103,7 @@ if __name__ == "__main__":
     #code_tokens_java = jprocessor.tokenize_code(code)
     cnt = 0
     done = False
-    for dt in tqdm(data[14975:]): #12480+721
+    for dt in tqdm(data[15373:]): #
         if dt['id'].split("_")[0] in problemid_to_tc.keys():
             #if(dt['tgt_id'].split("_")[1] != "s473235135"):
             #    continue
@@ -117,9 +117,7 @@ if __name__ == "__main__":
                 continue
             uniq.add(dt['tgt_id'])
 
-            p3 = subprocess.run(["rm","Main.java"])
-            p4 = subprocess.run(["rm","*.class"])
-
+            
             with open('Main.java', 'w', encoding='utf8') as fw:
                 fw.write(code)
             test_case_folder = problemid_to_tc[dt['id'].split("_")[0]]
@@ -148,4 +146,8 @@ if __name__ == "__main__":
                 if not compare_files('cmd_out.txt', 'cmd_out_match.txt'):
                     print(dt['tgt_id'])
                     print(in_file)
+                
+            p3 = subprocess.run(["rm","Main.java"])
+            p4 = subprocess.run(["rm","*.class"])
+
             

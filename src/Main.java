@@ -1,52 +1,50 @@
-import java . util . LinkedList ;
+import java . util . ArrayList ;
+import java . util . List ;
 import java . util . Scanner ;
 public class Main {
-  static int N ;
-  static int Q ;
-  static LinkedList < Integer > [ ] v ;
-  static int [ ] ans ;
-  static int [ ] parent ;
-  public static void main ( String [ ] args ) {
-    Scanner sc = new Scanner ( System . in ) ;
-    N = sc . nextInt ( ) ;
-    Q = sc . nextInt ( ) ;
-    v = new LinkedList [ N + 1 ] ;
-    ans = new int [ N + 1 ] ;
-    parent = new int [ N + 1 ] ;
-    for ( int i = 1 ;
-    i <= N ;
-    i ++ ) {
-      v [ i ] = new LinkedList < Integer > ( ) ;
-    }
-    for ( int i = 1 ;
-    i <= N - 1 ;
-    i ++ ) {
-      int a = sc . nextInt ( ) ;
-      int b = sc . nextInt ( ) ;
-      v [ a ] . add ( b ) ;
-      parent [ b ] = a ;
-    }
-    for ( int i = 0 ;
-    i < Q ;
-    i ++ ) {
-      int p = sc . nextInt ( ) ;
-      int q = sc . nextInt ( ) ;
-      ans [ p ] += q ;
-    }
-    for ( int i = 2 ;
-    i <= N ;
-    i ++ ) {
-      int pi = parent [ i ] ;
-      System . err . println ( "i pi " + i + " " + pi ) ;
-      if ( pi != 0 ) {
-        ans [ i ] += ans [ pi ] ;
+  public static void main ( String [ ] args ) throws Exception {
+    try ( Scanner sc = new Scanner ( System . in ) ) {
+      int N = sc . nextInt ( ) ;
+      int Q = sc . nextInt ( ) ;
+      Node [ ] nodes = new Node [ N ] ;
+      for ( int i = 0 ;
+      i < N ;
+      i ++ ) {
+        nodes [ i ] = new Node ( ) ;
       }
+      for ( int i = 0 ;
+      i < N - 1 ;
+      i ++ ) {
+        int a = sc . nextInt ( ) ;
+        int b = sc . nextInt ( ) ;
+        nodes [ a - 1 ] . children . add ( nodes [ b - 1 ] ) ;
+      }
+      for ( int i = 0 ;
+      i < Q ;
+      i ++ ) {
+        int p = sc . nextInt ( ) ;
+        long x = sc . nextLong ( ) ;
+        nodes [ p - 1 ] . counter += x ;
+      }
+      addCounter ( nodes [ 0 ] ) ;
+      StringBuffer ans = new StringBuffer ( ) ;
+      ans . append ( nodes [ 0 ] . counter ) ;
+      for ( int i = 1 ;
+      i < N ;
+      i ++ ) {
+        ans . append ( " " ) . append ( nodes [ i ] . counter ) ;
+      }
+      System . out . println ( ans . toString ( ) ) ;
     }
-    for ( int i = 1 ;
-    i <= N ;
-    i ++ ) {
-      System . out . print ( ans [ i ] + " " ) ;
+  }
+  public static void addCounter ( Node node ) {
+    for ( Node child : node . children ) {
+      child . counter += node . counter ;
+      addCounter ( child ) ;
     }
-    System . out . println ( ) ;
+  }
+  public static class Node {
+    public long counter = 0 ;
+    public List < Node > children = new ArrayList < > ( ) ;
   }
 }
