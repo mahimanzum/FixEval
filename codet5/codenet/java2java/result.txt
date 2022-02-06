@@ -1,0 +1,23 @@
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 50231.19it/s]
+0it [00:00, ?it/s]2it [00:00, 4647.43it/s]
+inside function
+0it [00:00, ?it/s]2it [00:00, 474.42it/s]
+BLEU:		11.90
+Exact Match:		0.00
+['/home/mahim/program_repair/CodeNet/evaluation/CodeBLEU', '/home/mahim/program_repair/CodeNet', '/home/mahim/miniconda3/envs/python36/lib/python36.zip', '/home/mahim/miniconda3/envs/python36/lib/python3.6', '/home/mahim/miniconda3/envs/python36/lib/python3.6/lib-dynload', '/home/mahim/miniconda3/envs/python36/lib/python3.6/site-packages', '.']
+preprocess inputs
+references length =  2
+hypothesis length =  2
+calculate ngram match (BLEU
+calculate corpus BLEU
+calculate syntax match
+calculate dataflow match
+normalized_ref_dfg: [('var_4', 'comesFrom', ['var_0', 'var_1', 'var_2', 'var_3']), ('var_0', 'comesFrom', []), ('var_1', 'comesFrom', []), ('var_3', 'comesFrom', []), ('var_2', 'comesFrom', []), ('var_6', 'comesFrom', ['var_4', 'var_5']), ('var_4', 'comesFrom', ['var_4']), ('var_5', 'comesFrom', []), ('var_9', 'comesFrom', ['var_6', 'var_7', 'var_8']), ('var_8', 'comesFrom', []), ('var_7', 'comesFrom', []), ('var_6', 'comesFrom', ['var_6']), ('var_3', 'comesFrom', ['var_3']), ('var_10', 'comesFrom', []), ('var_11', 'comesFrom', []), ('var_9', 'comesFrom', ['var_9']), ('var_9', 'comesFrom', ['var_9']), ('var_9', 'comesFrom', ['var_9']), ('var_12', 'comesFrom', []), ('var_3', 'comesFrom', ['var_3']), ('var_10', 'comesFrom', ['var_10']), ('var_11', 'comesFrom', ['var_11']), ('var_12', 'comesFrom', ['var_12'])]
+normalized_ref_dfg: [('var_4', 'comesFrom', ['var_0', 'var_1', 'var_2', 'var_3']), ('var_0', 'comesFrom', []), ('var_1', 'comesFrom', []), ('var_3', 'comesFrom', []), ('var_2', 'comesFrom', []), ('var_6', 'comesFrom', ['var_4', 'var_5']), ('var_4', 'comesFrom', ['var_4']), ('var_5', 'comesFrom', []), ('var_9', 'comesFrom', ['var_6', 'var_7', 'var_8']), ('var_8', 'comesFrom', []), ('var_7', 'comesFrom', []), ('var_6', 'comesFrom', ['var_6']), ('var_9', 'comesFrom', ['var_9']), ('var_9', 'comesFrom', ['var_9']), ('var_11', 'comesFrom', ['var_9', 'var_10']), ('var_9', 'comesFrom', ['var_9']), ('var_10', 'comesFrom', []), ('var_10', 'comesFrom', []), ('var_12', 'comesFrom', ['var_9', 'var_10']), ('var_9', 'comesFrom', ['var_9']), ('var_10', 'comesFrom', []), ('var_10', 'comesFrom', []), ('var_13', 'comesFrom', ['var_12', 'var_10']), ('var_12', 'comesFrom', ['var_12']), ('var_10', 'comesFrom', []), ('var_14', 'comesFrom', ['var_12', 'var_10']), ('var_12', 'comesFrom', ['var_12']), ('var_10', 'comesFrom', []), ('var_3', 'comesFrom', ['var_3']), ('var_15', 'comesFrom', []), ('var_16', 'comesFrom', []), ('var_11', 'comesFrom', ['var_11']), ('var_13', 'comesFrom', ['var_13']), ('var_14', 'comesFrom', ['var_14']), ('var_3', 'comesFrom', ['var_3']), ('var_15', 'comesFrom', []), ('var_16', 'comesFrom', []), ('var_17', 'comesFrom', []), ('var_3', 'comesFrom', ['var_3']), ('var_15', 'comesFrom', ['var_15']), ('var_16', 'comesFrom', ['var_16']), ('var_17', 'comesFrom', ['var_17']), ('var_17', 'comesFrom', ['var_17']), ('var_3', 'comesFrom', ['var_3']), ('var_15', 'comesFrom', ['var_15']), ('var_16', 'comesFrom', ['var_16'])]
+Ngram match:	11.73
+Weighted ngram:	16.61
+Syntax match:	21.17
+Dataflow match:	17.39
+CodeBLEU score: 16.73
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:00<00:00,  1.38it/s]100%|██████████| 2/2 [00:01<00:00,  1.58it/s]100%|██████████| 2/2 [00:01<00:00,  1.55it/s]
+Success - 0, Errors - 2 [Total - 14]
