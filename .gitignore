@@ -13,7 +13,7 @@ Project_CodeNet/
 codet5/tensorboard/
 src/atcoder_test_cases/
 src/codejam
-
+wget-log
 
 __pycache__/
 *.py[cod]
