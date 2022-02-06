@@ -11,6 +11,9 @@
 data/
 Project_CodeNet/
 codet5/tensorboard/
+src/atcoder_test_cases/
+src/codejam
+
 
 __pycache__/
 *.py[cod]
