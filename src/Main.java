@@ -1,114 +1,94 @@
-import java . io . OutputStream ;
-import java . io . IOException ;
-import java . io . InputStream ;
-import java . io . PrintWriter ;
-import java . util . StringTokenizer ;
-import java . io . IOException ;
-import java . io . BufferedReader ;
-import java . io . InputStreamReader ;
-import java . io . InputStream ;
+import java . util . HashMap ;
+import java . util . HashSet ;
+import java . util . LinkedList ;
+import java . util . Map ;
+import java . util . Objects ;
+import java . util . Queue ;
+import java . util . Scanner ;
+import java . util . Set ;
 public class Main {
-  public static void main ( String [ ] args ) {
-    InputStream inputStream = System . in ;
-    OutputStream outputStream = System . out ;
-    InputReader in = new InputReader ( inputStream ) ;
-    PrintWriter out = new PrintWriter ( outputStream ) ;
-    TaskE solver = new TaskE ( ) ;
-    solver . solve ( 1 , in , out ) ;
-    out . close ( ) ;
+  public static class Edge {
+    int a ;
+    int b ;
+    public Edge ( int a , int b ) {
+      this . a = a ;
+      this . b = b ;
+    }
+    @ Override public boolean equals ( Object o ) {
+      if ( this == o ) return true ;
+      if ( o == null || getClass ( ) != o . getClass ( ) ) return false ;
+      Edge edge = ( Edge ) o ;
+      return a == edge . a && b == edge . b ;
+    }
+    @ Override public int hashCode ( ) {
+      return Objects . hash ( a , b ) ;
+    }
   }
-  static class TaskE {
-    static final long MODULO = ( long ) 1e9 + 7 ;
-    public void solve ( int testNumber , InputReader in , PrintWriter out ) {
-      int n = in . nextInt ( ) ;
-      int m = in . nextInt ( ) ;
-      String s = in . next ( ) ;
-      if ( s . charAt ( 0 ) == 'B' ) {
-        s = invert ( s ) ;
-      }
-      if ( ! s . contains ( "B" ) ) {
-        out . println ( countSimple ( n ) ) ;
-        return ;
-      }
-      int minOdd = Integer . MAX_VALUE ;
-      int start = Integer . MAX_VALUE ;
-      int count = 0 ;
-      for ( int i = 0 ;
-      i < s . length ( ) ;
-      ++ i ) {
-        if ( s . charAt ( i ) == 'R' ) {
-          ++ count ;
+  public static void main ( String [ ] args ) {
+    Scanner scanner = new Scanner ( System . in ) ;
+    int n = scanner . nextInt ( ) ;
+    int m = scanner . nextInt ( ) ;
+    Map < Integer , Set < Integer >> graph = new HashMap < > ( ) ;
+    for ( int i = 0 ;
+    i < m ;
+    ++ i ) {
+      int a = scanner . nextInt ( ) ;
+      int b = scanner . nextInt ( ) ;
+      Set < Integer > nextA = graph . getOrDefault ( a , new HashSet < > ( ) ) ;
+      nextA . add ( b ) ;
+      Set < Integer > nextB = graph . getOrDefault ( b , new HashSet < > ( ) ) ;
+      nextB . add ( a ) ;
+      graph . put ( a , nextA ) ;
+      graph . put ( b , nextB ) ;
+    }
+    if ( m % 2 == 1 ) {
+      System . out . println ( - 1 ) ;
+      return ;
+    }
+    Set < Edge > edges = new HashSet < > ( ) ;
+    bfs ( n , graph , edges ) ;
+    edges . forEach ( edge -> System . out . println ( edge . a + " " + edge . b ) ) ;
+  }
+  public static void bfs ( int n , Map < Integer , Set < Integer >> graph , Set < Edge > edges ) {
+    Queue < Integer > nodes = new LinkedList < > ( ) ;
+    int [ ] order = new int [ n + 1 ] ;
+    nodes . add ( 1 ) ;
+    int [ ] visited = new int [ n + 1 ] ;
+    int [ ] outDegrees = new int [ n + 1 ] ;
+    int [ ] father = new int [ n + 1 ] ;
+    visited [ 1 ] = 1 ;
+    int i = 0 ;
+    order [ i ++ ] = 1 ;
+    while ( ! nodes . isEmpty ( ) ) {
+      int current = nodes . poll ( ) ;
+      for ( int son : graph . get ( current ) ) {
+        if ( visited [ son ] == 0 ) {
+          order [ i ++ ] = son ;
+          father [ son ] = current ;
+          visited [ son ] = 1 ;
+          nodes . add ( son ) ;
         }
         else {
-          if ( start == Integer . MAX_VALUE ) start = count ;
-          if ( count % 2 != 0 ) {
-            minOdd = Math . min ( minOdd , count ) ;
+          if ( son != father [ current ] && ! edges . contains ( new Edge ( current , son ) ) && ! edges . contains ( new Edge ( son , current ) ) ) {
+            edges . add ( new Edge ( current , son ) ) ;
+            outDegrees [ current ] ++ ;
           }
-          count = 0 ;
         }
       }
-      minOdd = Math . min ( minOdd , start ) ;
-      out . println ( countComplex ( n , minOdd ) ) ;
     }
-    private long countComplex ( int n , int minOdd ) {
-      if ( n % 2 != 0 ) return 0 ;
-      return 2 * countWithMaxRun ( n / 2 , minOdd / 2 ) % MODULO ;
-    }
-    private long countWithMaxRun ( int n , int maxRun ) {
-      long [ ] res = new long [ n + 1 ] ;
-      for ( int i = 0 ;
-      i <= maxRun && i + 1 <= n ;
-      ++ i ) {
-        res [ i + 1 ] = i + 1 ;
+    for ( i = n - 1 ;
+    i >= 1 ;
+    -- i ) {
+      int current = order [ i ] ;
+      int currentFather = father [ current ] ;
+      if ( outDegrees [ current ] % 2 == 0 ) {
+        edges . add ( new Edge ( currentFather , current ) ) ;
+        outDegrees [ currentFather ] ++ ;
       }
-      long s = 0 ;
-      for ( int i = 1 ;
-      i <= n ;
-      ++ i ) {
-        s += res [ i - 1 ] ;
-        if ( i - maxRun - 2 >= 0 ) {
-          s -= res [ i - maxRun - 2 ] ;
-        }
-        s %= MODULO ;
-        if ( s < 0 ) s += MODULO ;
-        res [ i ] += s ;
-        res [ i ] %= MODULO ;
+      else {
+        edges . add ( new Edge ( current , currentFather ) ) ;
+        outDegrees [ current ] ++ ;
       }
-      return res [ n ] ;
-    }
-    private long countSimple ( int n ) {
-      return countWithMaxRun ( n , 1 ) ;
-    }
-    private String invert ( String s ) {
-      char [ ] res = s . toCharArray ( ) ;
-      for ( int i = 0 ;
-      i < res . length ;
-      ++ i ) {
-        res [ i ] ^= 'R' ^ 'B' ;
-      }
-      return new String ( res ) ;
-    }
-  }
-  static class InputReader {
-    public BufferedReader reader ;
-    public StringTokenizer tokenizer ;
-    public InputReader ( InputStream stream ) {
-      reader = new BufferedReader ( new InputStreamReader ( stream ) , 32768 ) ;
-      tokenizer = null ;
-    }
-    public String next ( ) {
-      while ( tokenizer == null || ! tokenizer . hasMoreTokens ( ) ) {
-        try {
-          tokenizer = new StringTokenizer ( reader . readLine ( ) ) ;
-        }
-        catch ( IOException e ) {
-          throw new RuntimeException ( e ) ;
-        }
-      }
-      return tokenizer . nextToken ( ) ;
-    }
-    public int nextInt ( ) {
-      return Integer . parseInt ( next ( ) ) ;
     }
   }
 }

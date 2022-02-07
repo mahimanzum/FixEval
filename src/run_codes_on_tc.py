@@ -25,11 +25,11 @@ def only_digits(num):
 def check_floating(n1, n2):
     if (not only_digits(n1)) or (not only_digits(n2)):
         return False
-    print(float(n1), float(n2))
+    #print(float(n1), float(n2))
     if abs(float(n1)-float(n2))<1e-6:
         return True
     return False
-     
+
 def print_error(l1, l2):
     print("###")
     print(l1)
@@ -100,15 +100,19 @@ if __name__ == "__main__":
     
     print("len(problemid_to_tc) = ", len(problemid_to_tc))
 
-    data = getJsonData("../data/java/processed/test.jsonl")
+    data = getJsonData("../data/java/processed/valid.jsonl")
     root_folder = "../third_party"
     jprocessor = JavaProcessor(root_folder=root_folder)
     uniq = set()
     #code_tokens_java = jprocessor.tokenize_code(code)
     cnt = 0
     done = False
+
+    invalid_problems = ['p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
     for dt in tqdm(data): #9630
         if dt['id'].split("_")[0] in problemid_to_tc.keys():
+            if dt['id'].split("_")[0] in invalid_problems:
+                continue
             #if(dt['tgt_id'].split("_")[0] != "p02678"):
             #    continue
             cnt+=1
