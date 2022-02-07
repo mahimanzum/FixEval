@@ -19,16 +19,17 @@ def getJsonData(JsonFile):
         data = json.load(f)
     return data
 
+def only_digits(num):
+    return num.replace("-", "").replace("+", "").replace('.','',1).replace("E","").isdigit()
+
 def check_floating(n1, n2):
-    n1 = n1.replace("-", "").replace("+", "")
-    n2 = n2.replace("-", "").replace("+", "")
-    
-    if (not n1.replace('.','',1).replace("E","").isdigit()) or (not n1.replace('.','',1).replace("E","").isdigit()):
+    if (not only_digits(n1)) or (not only_digits(n2)):
         return False
-    if abs(float(n1)-float(n2))<1e8:
+    print(float(n1), float(n2))
+    if abs(float(n1)-float(n2))<1e-6:
         return True
     return False
-    
+     
 def print_error(l1, l2):
     print("###")
     print(l1)
@@ -37,23 +38,26 @@ def print_error(l1, l2):
     print("###")
 
 def compare_files(file1, file2):
-    with open(file1) as f1, open(file2) as f2: 
-        content1 = f1.read().split()
-        content2 = f2.read().split()
-
-        for l1, l2 in zip(content1, content2):
-            if l1.strip() != l2.strip(): 
-                num1s = l1.strip().split(" ")
-                num2s = l2.strip().split(" ")
-                if(len(num1s) == len(num2s)):
-                    for idx in range(len(num1s)):
-                        if not check_floating(num1s[idx],num2s[idx]):
-                            print_error(l1, l2)
-                            return False
-                else:
-                    print_error(l1, l2)
-                    return False
-    return True
+    try:
+        with open(file1) as f1, open(file2) as f2: 
+            content1 = f1.read().split()
+            content2 = f2.read().split()
+            for l1, l2 in zip(content1, content2):
+                if l1.strip() != l2.strip(): 
+                    num1s = l1.strip().split(" ")
+                    num2s = l2.strip().split(" ")
+                    if(len(num1s) == len(num2s)):
+                        for idx in range(len(num1s)):
+                            if not check_floating(num1s[idx],num2s[idx]):
+                                print_error(l1, l2)
+                                return False
+                    else:
+                        print_error(l1, l2)
+                        return False
+            return True
+    except Exception as e:
+        print("exception = ", e)
+        return False
 
 if __name__ == "__main__":
 
@@ -103,9 +107,9 @@ if __name__ == "__main__":
     #code_tokens_java = jprocessor.tokenize_code(code)
     cnt = 0
     done = False
-    for dt in tqdm(data[15373:]): #
+    for dt in tqdm(data): #9630
         if dt['id'].split("_")[0] in problemid_to_tc.keys():
-            #if(dt['tgt_id'].split("_")[1] != "s473235135"):
+            #if(dt['tgt_id'].split("_")[0] != "p02678"):
             #    continue
             cnt+=1
             #print("comes")
@@ -122,20 +126,21 @@ if __name__ == "__main__":
                 fw.write(code)
             test_case_folder = problemid_to_tc[dt['id'].split("_")[0]]
             in_files = glob(test_case_folder+"/in/*")
-            p1 = subprocess.run(["javac","Main.java"],stderr=PIPE)
+            p1 = subprocess.run(["javac","Main.java"], stderr=PIPE)
             return_code = p1.returncode
             if(return_code):
                 print("######## doesnt compile  ############")
                 print(dt['tgt_id'])
+                print(p1.stderr.decode("utf-8"))
+                #sys.exit(0)
                 continue
 
             for in_file in in_files:
+                print("running file ", in_file ,"on ", dt['tgt_id'])
                 #subprocess.run(["java","Main" ,"<",in_files[0], ">", "cmd_out.txt"], shell=True)
                 cmd = "java Main < {} > cmd_out.txt".format(in_file)
-                p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+                p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=subprocess.DEVNULL, close_fds=True)
                 p.wait()
-                #output = p.stdout
-                #print(output)
                 out = in_file.split("/")
                 out[3] = "out"
                 out_file ="/".join(out)
@@ -144,10 +149,8 @@ if __name__ == "__main__":
                 p2 = subprocess.Popen(["cp",out_file, "cmd_out_match.txt"])
                 p2.wait()
                 if not compare_files('cmd_out.txt', 'cmd_out_match.txt'):
+                    print("$$$$$$$$$$$ doesnt match  $$$$$$$$$$$$$$$")
                     print(dt['tgt_id'])
                     print(in_file)
-                
-            p3 = subprocess.run(["rm","Main.java"])
-            p4 = subprocess.run(["rm","*.class"])
 
             
