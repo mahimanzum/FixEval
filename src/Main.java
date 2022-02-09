@@ -1,94 +1,59 @@
-import java . util . HashMap ;
-import java . util . HashSet ;
-import java . util . LinkedList ;
-import java . util . Map ;
-import java . util . Objects ;
-import java . util . Queue ;
-import java . util . Scanner ;
-import java . util . Set ;
+import java . util . * ;
 public class Main {
-  public static class Edge {
-    int a ;
-    int b ;
-    public Edge ( int a , int b ) {
-      this . a = a ;
-      this . b = b ;
-    }
-    @ Override public boolean equals ( Object o ) {
-      if ( this == o ) return true ;
-      if ( o == null || getClass ( ) != o . getClass ( ) ) return false ;
-      Edge edge = ( Edge ) o ;
-      return a == edge . a && b == edge . b ;
-    }
-    @ Override public int hashCode ( ) {
-      return Objects . hash ( a , b ) ;
-    }
-  }
-  public static void main ( String [ ] args ) {
-    Scanner scanner = new Scanner ( System . in ) ;
-    int n = scanner . nextInt ( ) ;
-    int m = scanner . nextInt ( ) ;
-    Map < Integer , Set < Integer >> graph = new HashMap < > ( ) ;
+  public static void main ( String args [ ] ) {
+    Scanner sc = new Scanner ( System . in ) ;
+    long mod = 1000000007 ;
+    int n = sc . nextInt ( ) ;
+    int q = sc . nextInt ( ) ;
+    int [ ] a = new int [ n ] ;
     for ( int i = 0 ;
-    i < m ;
-    ++ i ) {
-      int a = scanner . nextInt ( ) ;
-      int b = scanner . nextInt ( ) ;
-      Set < Integer > nextA = graph . getOrDefault ( a , new HashSet < > ( ) ) ;
-      nextA . add ( b ) ;
-      Set < Integer > nextB = graph . getOrDefault ( b , new HashSet < > ( ) ) ;
-      nextB . add ( a ) ;
-      graph . put ( a , nextA ) ;
-      graph . put ( b , nextB ) ;
+    i < n ;
+    i ++ ) {
+      a [ i ] = sc . nextInt ( ) ;
     }
-    if ( m % 2 == 1 ) {
-      System . out . println ( - 1 ) ;
-      return ;
+    long dp [ ] [ ] = new long [ n ] [ n ] ;
+    for ( int i = 0 ;
+    i < n ;
+    i ++ ) {
+      for ( int j = 0 ;
+      j < n ;
+      j ++ ) {
+        if ( a [ i ] > a [ j ] ) dp [ i ] [ j ] = 1 ;
+      }
     }
-    Set < Edge > edges = new HashSet < > ( ) ;
-    bfs ( n , graph , edges ) ;
-    edges . forEach ( edge -> System . out . println ( edge . a + " " + edge . b ) ) ;
+    long half = inverse ( 2 , mod ) ;
+    for ( int i = 0 ;
+    i < q ;
+    i ++ ) {
+      int x = sc . nextInt ( ) ;
+      int y = sc . nextInt ( ) ;
+      for ( int j = 0 ;
+      j < n ;
+      j ++ ) {
+        if ( j != y - 1 && j != x - 1 ) {
+          dp [ y - 1 ] [ j ] = dp [ x - 1 ] [ j ] = ( half * dp [ x - 1 ] [ j ] % mod + half * dp [ y - 1 ] [ j ] % mod ) % mod ;
+          dp [ j ] [ x - 1 ] = dp [ j ] [ y - 1 ] = ( half * dp [ j ] [ x - 1 ] % mod + half * dp [ j ] [ y - 1 ] % mod ) % mod ;
+        }
+        dp [ y - 1 ] [ x - 1 ] = dp [ x - 1 ] [ y - 1 ] = ( half * dp [ y - 1 ] [ x - 1 ] % mod + half * dp [ x - 1 ] [ y - 1 ] % mod ) % mod ;
+      }
+    }
+    long expectation = 0 ;
+    for ( int i = 0 ;
+    i < n ;
+    i ++ ) {
+      for ( int j = i + 1 ;
+      j < n ;
+      j ++ ) {
+        expectation = ( expectation + dp [ i ] [ j ] ) % mod ;
+      }
+    }
+    System . out . println ( expectation * bin_exp ( 2 , q , mod ) % mod ) ;
   }
-  public static void bfs ( int n , Map < Integer , Set < Integer >> graph , Set < Edge > edges ) {
-    Queue < Integer > nodes = new LinkedList < > ( ) ;
-    int [ ] order = new int [ n + 1 ] ;
-    nodes . add ( 1 ) ;
-    int [ ] visited = new int [ n + 1 ] ;
-    int [ ] outDegrees = new int [ n + 1 ] ;
-    int [ ] father = new int [ n + 1 ] ;
-    visited [ 1 ] = 1 ;
-    int i = 0 ;
-    order [ i ++ ] = 1 ;
-    while ( ! nodes . isEmpty ( ) ) {
-      int current = nodes . poll ( ) ;
-      for ( int son : graph . get ( current ) ) {
-        if ( visited [ son ] == 0 ) {
-          order [ i ++ ] = son ;
-          father [ son ] = current ;
-          visited [ son ] = 1 ;
-          nodes . add ( son ) ;
-        }
-        else {
-          if ( son != father [ current ] && ! edges . contains ( new Edge ( current , son ) ) && ! edges . contains ( new Edge ( son , current ) ) ) {
-            edges . add ( new Edge ( current , son ) ) ;
-            outDegrees [ current ] ++ ;
-          }
-        }
-      }
-    }
-    for ( i = n - 1 ;
-    i >= 1 ;
-    -- i ) {
-      int current = order [ i ] ;
-      int currentFather = father [ current ] ;
-      if ( outDegrees [ current ] % 2 == 0 ) {
-        edges . add ( new Edge ( currentFather , current ) ) ;
-        outDegrees [ currentFather ] ++ ;
-      }
-      else {
-        edges . add ( new Edge ( current , currentFather ) ) ;
-        outDegrees [ current ] ++ ;
-      }
-    }
+  public static long bin_exp ( long base , long exp , long mod ) {
+    if ( exp == 0 ) return 1 ;
+    return bin_exp ( base * base % mod , exp / 2 , mod ) * ( exp % 2 == 1 ? base : 1 ) % mod ;
+  }
+  public static long inverse ( long a , long mod ) {
+    return bin_exp ( a , mod - 2 , mod ) ;
   }
 }
