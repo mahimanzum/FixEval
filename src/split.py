@@ -101,7 +101,7 @@ def split(args):
             test_problems.append(problem)
     test_problems = list(set(test_problems))
 
-    valid_problems = set(test_problems[int(0.1*len(problems_of_lang)):])
+    valid_problems = set(test_problems[int(0.1*len(problems_of_lang)):min(len(test_problems),int(0.2*len(problems_of_lang)))])
     test_problems = test_problems[:int(0.1*len(problems_of_lang))]
     test_problems = set(test_problems)
     
