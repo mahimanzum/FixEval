@@ -100,9 +100,13 @@ def split(args):
         if problem in problems_of_lang and problem not in invalid_problems:
             test_problems.append(problem)
     test_problems = list(set(test_problems))
-    test_problems = test_problems[:min(len(test_problems),int(0.2*len(problems_of_lang)))]
+
+    valid_problems = set(test_problems[int(0.1*len(problems_of_lang)):])
+    test_problems = test_problems[:int(0.1*len(problems_of_lang))]
     test_problems = set(test_problems)
     
+    
+
     print("len test problems", len(test_problems))
 
     all_data = defaultdict(list)
@@ -142,8 +146,7 @@ def split(args):
     #need to split by problem
     # make sure the problems used for testing not going in training
 
-    valid_problems = sample(list(all_data.keys()),len(list(all_data.keys()))//20)
-
+    
     for idx,problem in enumerate(list(all_data.keys())):
         submissions = all_data[problem]
         if problem not in valid_problems:
@@ -195,7 +198,7 @@ def prepare(args):
                 tgt = " ".join(ex['tgt'])
                 
                 id_writer.write(ex['src_id']+"_"+ex['tgt_id'] + '\n')
-                src_writer.write(src+" "+ex['src_verdict'] + '\n')
+                src_writer.write(src + '\n')
                 #src_writer.write(src+" "+ex['src_verdict'] + '\n')
                 tgt_writer.write(tgt + '\n')
 

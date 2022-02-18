@@ -1,3 +1,4 @@
+#check save dir
 #!/usr/bin/env bash
 
 export PYTHONIOENCODING=utf-8;
@@ -22,7 +23,7 @@ elif [[ $DATA_SRC == 'g4g' ]]; then
     path_2_data=${CODE_DIR_HOME}/data/g4g_functions;
 fi
 
-SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;
+SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};
 CACHE_DIR=${SAVE_DIR}/cached_data
 mkdir -p $SAVE_DIR
 mkdir -p $CACHE_DIR
