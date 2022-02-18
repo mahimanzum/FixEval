@@ -69,17 +69,6 @@ def calculate_similarity(code1_tokens, code2_tokens):
     return SequenceMatcher(None, code1, code2).ratio()
 
 def split(args):
-    processed = getJsonData("processed.json")
-    problems_of_lang = set()
-
-    for key in tqdm(processed):
-        for problem in processed[key]:
-            for sub in processed[key][problem]:
-                if args.lang=='java' and sub[2]=='Java':
-                    problems_of_lang.add(problem)
-                if args.lang=='py' and sub[2]=='Python':
-                    problems_of_lang.add(problem)
-    
     train_examples = []
     valid_examples = []
     test_examples = []
@@ -93,13 +82,19 @@ def split(args):
         with open(file, 'r') as f:
             temp = json.load(f)
             data.extend(temp)
-            
+
+    problems_of_lang = set()
+    for ex in tqdm(data):
+        problems_of_lang.add(ex[0]['problem_id'])
+
     problemid_to_tc = load_collected_test_suit()
     invalid_problems = ['p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
+    print("len of problems solved in ", args.lang, len(problems_of_lang))
     
     train_problems = set()
     valid_problems = set()
     test_problems = []
+    
     for problem in problemid_to_tc.keys():
         if problem in problems_of_lang and problem not in invalid_problems:
             test_problems.append(problem)
