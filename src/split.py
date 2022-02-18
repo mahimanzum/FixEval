@@ -99,8 +99,14 @@ def split(args):
     
     train_problems = set()
     valid_problems = set()
-    test_problems = set()
-
+    test_problems = []
+    for problem in problemid_to_tc.keys():
+        if problem not in invalid_problems:
+            test_problems.append(problem)
+    test_problems = set(test_problems)
+    test_problems = test_problems[:min(len(test_problems),int(0.2*len(problems_of_lang)))]
+    print("len test problems", len(test_problems))
+    
     all_data = defaultdict(list)
     
     for ex in tqdm(data):
@@ -124,12 +130,11 @@ def split(args):
                     "tgt_id": ex[1]['problem_id']+'_'+ex[1]['submission_id']
                 }
                 
-                if (ex[0]['problem_id'] in problemid_to_tc.keys()) and (ex[0]['problem_id'] not in invalid_problems) and (len(test_problems)< 0.2*len(problems_of_lang)):
+                if ex[0]['problem_id'] in test_problems:
                     # found a valid problem with suitable test cases and data is less than 20 % 
-                    test_problems.add(ex[0]['problem_id'])
                     test_examples.append(one_ex)
-                # not suitable test cases so adding in train
                 else:
+                    # not suitable test cases so adding in train
                     all_data[ex[0]['problem_id']].append(one_ex)
                 
         except Exception as e:
