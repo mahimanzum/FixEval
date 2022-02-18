@@ -7,6 +7,7 @@ from pprint import pprint
 from glob import glob
 from collections import defaultdict
 import sys
+import pandas as pd
 sys.path.append("..")
 random.seed(1234)
 
@@ -77,15 +78,12 @@ def split(args):
             temp = json.load(f)
             data.extend(temp)
             
-    #data = data[:40] #debug
-    #total = len(data)
-    #print(len(data))
-    
-    problem_id_to_tc = load_collected_test_suit()
+    problemid_to_tc = load_collected_test_suit()
     invalid_problems = ['p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
     
-    unique_problems = {}
-    test_set_problems = {}
+    train_problems = set()
+    valid_problems = set()
+    test_problems = set()
 
     all_data = defaultdict(list)
     
@@ -109,10 +107,10 @@ def split(args):
                     "tgt": jprocessor.tokenize_code(ex[1]['code_tokens']),
                     "tgt_id": ex[1]['problem_id']+'_'+ex[1]['submission_id']
                 }
-                unique_problems.add(ex[0]['problem_id'])
+                
                 if ex[0]['problem_id'] in problemid_to_tc.keys() and ex[0]['problem_id'] not in invalid_problems:
                     # found a valid problem with suitable test cases 
-                    test_set_problems.add(ex[0]['problem_id'])
+                    test_problems.add(ex[0]['problem_id'])
                     test_examples.append(one_ex)
                 # not suitable test cases so adding in train
                 else:
@@ -130,12 +128,20 @@ def split(args):
     for idx, problem in list(all_data.keys()):
         submissions = all_data[problem]
         if idx < len(all_data) - num_valid:
+            train_problems.add(problem)
             train_examples.extend(submissions[::])
         else:
+            valid_problems.add(problem)
             valid_examples.extend(submissions[::])
 
     del all_data
 
+    print("train , valid, test length = ",len(train_examples), len(valid_examples), len(test_examples))
+    print("intersection between problems ...")
+    print(train_problems & test_problems)
+    print(train_problems & valid_examples)
+    print(test_problems & valid_examples)
+    
     with open(os.path.join(args.out_dir, 'train.jsonl'), 'w', encoding='utf8') as fw:
         json.dump(train_examples, fw)
         #fw.write('\n'.join([json.dumps(ex) for ex in train_examples]) + '\n')
@@ -180,17 +186,18 @@ def prepare(args):
 
 if __name__ == '__main__':
     #need to tokenize here
+    #lang either java or py 
     parser = argparse.ArgumentParser()
     parser.add_argument("--lang", type=str, nargs='+', help='Language', default='java')
     parser.add_argument("--src_file", type=str, nargs='+', help='Source file', default='../data/java/jsons/')
     parser.add_argument("--src_dir", type=str, help='Source directory', default='../data/java/processed/')
     parser.add_argument("--out_dir", type=str, help='Output directory', default='../data/java/processed')
-    
-    #parser.add_argument("--fn", type=str, choices=['split', 'prepare'], help='Name of the function')
-    #parser.add_argument("--k", type=int, default=5, help='Number of submissions to consider for train split')
-    
     args = parser.parse_args()
 
+    if args.lang=='py':
+        args.src_file = args.src_file.replace('java', 'Python')
+        args.src_dir = args.src_dir.replace('java', 'Python')
+        args.out_dir = args.out_dir.replace('java', 'Python')
     #if args.fn == 'split':
     split(args)
     #elif args.fn == 'prepare':
