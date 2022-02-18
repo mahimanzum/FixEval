@@ -71,6 +71,7 @@ def split(args):
     unique_data = set()
     idx = 0
     files = args.src_file
+    #print(files)
     data = []
     for file in glob(files+'*.json'):
         print(file)
@@ -125,22 +126,22 @@ def split(args):
 
     num_valid = len(all_data) // 20  # 5% of the total problems goes to validation
         
-    for idx, problem in list(all_data.keys()):
+    for idx,problem in enumerate(list(all_data.keys())):
         submissions = all_data[problem]
         if idx < len(all_data) - num_valid:
             train_problems.add(problem)
-            train_examples.extend(submissions[::])
+            train_examples.extend(submissions)
         else:
             valid_problems.add(problem)
-            valid_examples.extend(submissions[::])
+            valid_examples.extend(submissions)
 
     del all_data
 
     print("train , valid, test length = ",len(train_examples), len(valid_examples), len(test_examples))
     print("intersection between problems ...")
     print(train_problems & test_problems)
-    print(train_problems & valid_examples)
-    print(test_problems & valid_examples)
+    print(train_problems & valid_problems)
+    print(test_problems & valid_problems)
     
     with open(os.path.join(args.out_dir, 'train.jsonl'), 'w', encoding='utf8') as fw:
         json.dump(train_examples, fw)
@@ -175,7 +176,7 @@ def prepare(args):
                 src = " ".join(ex['src'])
                 tgt = " ".join(ex['tgt'])
                 
-                id_writer.write(ex['id'] + '\n')
+                id_writer.write(ex['src_id']+"_"+ex['tgt_id'] + '\n')
                 src_writer.write(src+" "+ex['src_verdict'] + '\n')
                 tgt_writer.write(tgt + '\n')
 
@@ -187,18 +188,15 @@ def prepare(args):
 if __name__ == '__main__':
     #need to tokenize here
     #lang either java or py 
+    # default java
+    # python command to run: python split.py --lang py --src_file ../data/Python/jsons/ --src_dir ../data/Python/processed/ --out_dir ../data/Python/processed/
     parser = argparse.ArgumentParser()
-    parser.add_argument("--lang", type=str, nargs='+', help='Language', default='java')
-    parser.add_argument("--src_file", type=str, nargs='+', help='Source file', default='../data/java/jsons/')
+    parser.add_argument("--lang", type=str, help='Language', default='java')
+    parser.add_argument("--src_file", type=str, help='Source file', default='../data/java/jsons/')
     parser.add_argument("--src_dir", type=str, help='Source directory', default='../data/java/processed/')
     parser.add_argument("--out_dir", type=str, help='Output directory', default='../data/java/processed')
     args = parser.parse_args()
 
-    if args.lang=='py':
-        args.src_file = args.src_file.replace('java', 'Python')
-        args.src_dir = args.src_dir.replace('java', 'Python')
-        args.out_dir = args.out_dir.replace('java', 'Python')
-    #if args.fn == 'split':
     split(args)
     #elif args.fn == 'prepare':
     prepare(args)
