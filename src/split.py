@@ -124,7 +124,7 @@ def split(args):
                     "tgt_id": ex[1]['problem_id']+'_'+ex[1]['submission_id']
                 }
                 
-                if (ex[0]['problem_id'] in problemid_to_tc.keys()) and (ex[0]['problem_id'] not in invalid_problems) and (len(test_examples)< 0.2*len(problems_of_lang)):
+                if (ex[0]['problem_id'] in problemid_to_tc.keys()) and (ex[0]['problem_id'] not in invalid_problems) and (len(test_problems)< 0.2*len(problems_of_lang)):
                     # found a valid problem with suitable test cases and data is less than 20 % 
                     test_problems.add(ex[0]['problem_id'])
                     test_examples.append(one_ex)
