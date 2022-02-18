@@ -17,46 +17,46 @@ root_folder = "../third_party"
 jprocessor = JavaProcessor(root_folder=root_folder)
 pyprocessor = PythonProcessor(root_folder=root_folder)
 
-'''
-class OneExample:
-    def __init__(
-            self,
-            source,
-            lang,
-            problem_id,
-            code_tokens,
-            functions_standalone=[],
-            functions_class=[],
-            submission_id="",
-            verdict=""
-    ):
-        self.source = source
-        self.lang = lang
-        self.problem_id = problem_id
-        self.code_tokens = code_tokens
-        self.submission_id = submission_id
-        self.functions_standalone = functions_standalone
-        self.functions_class = functions_class
-        self.verdict=verdict
+def load_collected_test_suit():
+    problemlist=pd.read_csv("../Project_CodeNet/metadata/problem_list.csv")
+    problems = defaultdict(list)
+    for index, row in tqdm(problemlist.iterrows()):
+        if(row['dataset']=='AtCoder'):
+            if("AtCoder Regular Contest" in row['name']):
+                number = row['name'].split(" ")[3]
+                problems["ARC"+number].append(row['id'])
+            if("AtCoder Beginner Contest" in row['name']):
+                number = row['name'].split(" ")[3]
+                problems["ABC"+number].append(row['id'])
+            if("AtCoder Grand Contest" in row['name']):
+                number = row['name'].split(" ")[3]
+                problems["AGC"+number].append(row['id'])
+    folders = glob("atcoder_test_cases/*")
 
-    def __repr__(self):
-        return 'source: ' + self.source + '\n' + \
-               'lang: ' + self.lang + '\n' + \
-               'problem_id: ' + self.problem_id + '\n' + \
-               'code: ' + self.code_tokens + '\n' + \
-               'submission_id: ' + self.submission_id + '\n' + \
-               'verdict: ' + self.verdict + '\n'
+    final_keys = []
+    for idx in range(len(folders)):
+        folders[idx] = folders[idx].replace("atcoder_test_cases/", "")
+    #print(folders)
+    for key in problems.keys():
+        if key in folders:
+            if len(problems[key]) == len(glob("atcoder_test_cases/"+key+"/*")):
+                final_keys.append(key)
+                
+        elif key.lower() in folders :
+            if len(problems[key]) == len(glob("atcoder_test_cases/"+ key.lower() +"/*")):
+                final_keys.append(key)
 
-    def __str__(self):
-        return 'source: ' + self.source + '\n' + \
-               'lang: ' + self.lang + '\n' + \
-               'problem_id: ' + self.problem_id + '\n' + \
-               'code: ' + self.code_tokens + '\n' + \
-               'submission_id: ' + self.submission_id + '\n'+ \
-               'verdict: ' + self.verdict + '\n'
-    def toJSON(self):
-        return self.__dict__
-'''
+    problemid_to_tc = {}
+    for key in problems:
+        if(key in final_keys):
+            for idx, prob_id in enumerate(problems[key]):
+                folder_list = glob("atcoder_test_cases/"+key+"/*")
+                if(len(folder_list)==0):
+                    folder_list = glob("atcoder_test_cases/"+key.lower()+"/*")
+                problemid_to_tc[prob_id] = folder_list[idx]
+    
+    print("len(problemid_to_tc) = ", len(problemid_to_tc))
+    return problemid_to_tc
 
 def calculate_similarity(code1_tokens, code2_tokens):
     code1 = ' '.join(code1_tokens)
@@ -81,6 +81,12 @@ def split(args):
     #total = len(data)
     #print(len(data))
     
+    problem_id_to_tc = load_collected_test_suit()
+    invalid_problems = ['p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
+    
+    unique_problems = {}
+    test_set_problems = {}
+
     all_data = defaultdict(list)
     
     for ex in tqdm(data):
@@ -103,30 +109,30 @@ def split(args):
                     "tgt": jprocessor.tokenize_code(ex[1]['code_tokens']),
                     "tgt_id": ex[1]['problem_id']+'_'+ex[1]['submission_id']
                 }
-                all_data[ex[0]['problem_id']].append(one_ex)
+                unique_problems.add(ex[0]['problem_id'])
+                if ex[0]['problem_id'] in problemid_to_tc.keys() and ex[0]['problem_id'] not in invalid_problems:
+                    # found a valid problem with suitable test cases 
+                    test_set_problems.add(ex[0]['problem_id'])
+                    test_examples.append(one_ex)
+                # not suitable test cases so adding in train
+                else:
+                    all_data[ex[0]['problem_id']].append(one_ex)
                 idx+=1
         except Exception as e:
             print(e)
-
-    for problem in all_data.keys():
-        submissions = all_data[problem]
-        total = len(submissions)
-        num_test = total // 10  # 10% of the total
-        num_valid = total // 20  # 5% of the total
-        num_train = total - (num_valid + num_test)
-
-        train_examples.extend(submissions[:num_train])
-        valid_examples.extend(submissions[num_train:num_train+num_valid])
-        test_examples.extend(submissions[num_train+num_valid:])
-
-    #total = len(all_data)
-    #num_test = total // 10  # 10% of the total
-    #num_valid = total // 20  # 5% of the total
-    #num_train = total - (num_valid + num_test)
     
-    #train_examples = all_data[:num_train]
-    #valid_examples = all_data[num_train:num_train+num_valid]
-    #test_examples = all_data[num_train+num_valid:]
+    #this splitting is no valid
+    #need to split by problem
+    # make sure the problems used for testing not going in training
+
+    num_valid = len(all_data) // 20  # 5% of the total problems goes to validation
+        
+    for idx, problem in list(all_data.keys()):
+        submissions = all_data[problem]
+        if idx < len(all_data) - num_valid:
+            train_examples.extend(submissions[::])
+        else:
+            valid_examples.extend(submissions[::])
 
     del all_data
 
