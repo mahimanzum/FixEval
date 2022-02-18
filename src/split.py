@@ -101,12 +101,14 @@ def split(args):
     valid_problems = set()
     test_problems = []
     for problem in problemid_to_tc.keys():
-        if problem not in invalid_problems:
+        if problem in problems_of_lang and problem not in invalid_problems:
             test_problems.append(problem)
-    test_problems = set(test_problems)
+    test_problems = list(set(test_problems))
     test_problems = test_problems[:min(len(test_problems),int(0.2*len(problems_of_lang)))]
-    print("len test problems", len(test_problems))
+    test_problems = set(test_problems)
     
+    print("len test problems", len(test_problems))
+
     all_data = defaultdict(list)
     
     for ex in tqdm(data):
