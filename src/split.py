@@ -8,6 +8,7 @@ from glob import glob
 from collections import defaultdict
 import sys
 import pandas as pd
+from random import sample
 sys.path.append("..")
 random.seed(1234)
 
@@ -82,7 +83,7 @@ def split(args):
         with open(file, 'r') as f:
             temp = json.load(f)
             data.extend(temp)
-
+    data = data[:-1]
     problems_of_lang = set()
     for ex in tqdm(data):
         problems_of_lang.add(ex[0]['problem_id'])
@@ -141,15 +142,14 @@ def split(args):
     #need to split by problem
     # make sure the problems used for testing not going in training
 
-    num_valid = len(all_data) // 20  # 5% of the total problems goes to validation
-        
+    valid_problems = sample(list(all_data.keys()),len(list(all_data.keys()))//20)
+
     for idx,problem in enumerate(list(all_data.keys())):
         submissions = all_data[problem]
-        if idx < len(all_data) - num_valid:
+        if problem not in valid_problems:
             train_problems.add(problem)
             train_examples.extend(submissions)
         else:
-            valid_problems.add(problem)
             valid_examples.extend(submissions)
 
     del all_data
