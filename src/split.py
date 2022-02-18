@@ -18,6 +18,10 @@ root_folder = "../third_party"
 jprocessor = JavaProcessor(root_folder=root_folder)
 pyprocessor = PythonProcessor(root_folder=root_folder)
 
+def getJsonData(JsonFile):
+    with open(JsonFile, encoding="utf8") as f:
+        data = json.load(f)
+    return data
 def load_collected_test_suit():
     problemlist=pd.read_csv("../Project_CodeNet/metadata/problem_list.csv")
     problems = defaultdict(list)
@@ -65,6 +69,17 @@ def calculate_similarity(code1_tokens, code2_tokens):
     return SequenceMatcher(None, code1, code2).ratio()
 
 def split(args):
+    processed = getJsonData("processed.json")
+    problems_of_lang = set()
+
+    for key in tqdm(processed):
+        for problem in processed[key]:
+            for sub in processed[key][problem]:
+                if args.lang=='java' and sub[2]=='Java':
+                    problems_of_lang.add(problem)
+                if args.lang=='py' and sub[2]=='Python':
+                    problems_of_lang.add(problem)
+    
     train_examples = []
     valid_examples = []
     test_examples = []
@@ -109,14 +124,14 @@ def split(args):
                     "tgt_id": ex[1]['problem_id']+'_'+ex[1]['submission_id']
                 }
                 
-                if ex[0]['problem_id'] in problemid_to_tc.keys() and ex[0]['problem_id'] not in invalid_problems:
-                    # found a valid problem with suitable test cases 
+                if (ex[0]['problem_id'] in problemid_to_tc.keys()) and (ex[0]['problem_id'] not in invalid_problems) and (len(test_examples)< 0.2*len(problems_of_lang)):
+                    # found a valid problem with suitable test cases and data is less than 20 % 
                     test_problems.add(ex[0]['problem_id'])
                     test_examples.append(one_ex)
                 # not suitable test cases so adding in train
                 else:
                     all_data[ex[0]['problem_id']].append(one_ex)
-                idx+=1
+                
         except Exception as e:
             print(e)
     
@@ -137,7 +152,8 @@ def split(args):
 
     del all_data
 
-    print("train , valid, test length = ",len(train_examples), len(valid_examples), len(test_examples))
+    print("train , valid, test length = ",len(train_problems), len(valid_problems), len(test_problems))
+    
     print("intersection between problems ...")
     print(train_problems & test_problems)
     print(train_problems & valid_problems)
@@ -178,6 +194,7 @@ def prepare(args):
                 
                 id_writer.write(ex['src_id']+"_"+ex['tgt_id'] + '\n')
                 src_writer.write(src+" "+ex['src_verdict'] + '\n')
+                #src_writer.write(src+" "+ex['src_verdict'] + '\n')
                 tgt_writer.write(tgt + '\n')
 
     single_prepare('train')
