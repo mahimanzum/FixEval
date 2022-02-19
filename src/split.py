@@ -69,6 +69,17 @@ def calculate_similarity(code1_tokens, code2_tokens):
     code2 = ' '.join(code2_tokens)
     return SequenceMatcher(None, code1, code2).ratio()
 
+def deduplicate_jaccard(database):
+    accepted_sub = set()
+    problem_to_dataidx = defaultdict(list)
+    #ex[0]['problem_id']+'_'+ex[0]['submission_id']
+    for idx,dt in database:
+        problem_to_dataidx[dt[0]['problem_id']].append(idx)
+    
+    
+
+
+
 def split(args):
     train_examples = []
     valid_examples = []
@@ -87,6 +98,8 @@ def split(args):
     problems_of_lang = set()
     for ex in tqdm(data):
         problems_of_lang.add(ex[0]['problem_id'])
+    
+    data = deduplicate_jaccard(data)
 
     problemid_to_tc = load_collected_test_suit()
     invalid_problems = ['p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
@@ -110,7 +123,7 @@ def split(args):
     print("len test problems", len(test_problems))
 
     all_data = defaultdict(list)
-    
+    processor = jprocessor if args.lang = 'java' else pyprocessor
     for ex in tqdm(data):
         #ex = json.loads(line)
         try:
@@ -126,9 +139,9 @@ def split(args):
                 
                 one_ex = {
                     "src_id": problem_id,
-                    "src": jprocessor.tokenize_code(ex[0]['code_tokens']),
+                    "src": processor.tokenize_code(ex[0]['code_tokens']),
                     "src_verdict": ex[0]['verdict'],
-                    "tgt": jprocessor.tokenize_code(ex[1]['code_tokens']),
+                    "tgt": processor.tokenize_code(ex[1]['code_tokens']),
                     "tgt_id": ex[1]['problem_id']+'_'+ex[1]['submission_id']
                 }
                 
