@@ -125,14 +125,16 @@ class DuplicateDetector(Generic[DocumentId]):
             If keep_selector is None then it arbitrarily excludes one document id from each cluster of duplicates, and returns
             a set of the remaining document ids to exclude in order to de-duplicate your data.
         """
+        #print("comes")
         duplicate_clusters = self.compute_duplicates()
         # remove one document from each duplicate set to keep
         for cluster in duplicate_clusters:
+            #print(cluster)
             if keep_selector is None:
                 cluster.pop()   # Remove arbitrary element
             else:
                 document_to_keep = keep_selector(cluster)
                 cluster.discard(document_to_keep)
-
+        #if(len(duplicate_clusters)>2): print(duplicate_clusters)
         # flatten out the lists of sets into one superset, each element being a document_id that you will discard
         return set.union(*duplicate_clusters)
