@@ -9,6 +9,7 @@ from collections import defaultdict
 import sys
 import pandas as pd
 from random import sample
+from deduplication import DuplicateDetector
 sys.path.append("..")
 random.seed(1234)
 
@@ -71,6 +72,8 @@ def calculate_similarity(code1_tokens, code2_tokens):
 
 def deduplicate_jaccard(database):
     accepted_sub = set()
+    problem_to_dataidx = defaultdict(list)
+
     for idx,dt in enumerate(database):    
         if dt[1]['submission_id'] not in accepted_sub:
             accepted_sub.add(dt[1]['submission_id'])
@@ -90,6 +93,7 @@ def deduplicate_jaccard(database):
             for id in exclude_document_ids:
                 exclude_submissions.add(database[idx][1]['submission_id'])
         except Exception as e:
+            #print(e)
             pass
     deduplication_database = []
     for data in database:
@@ -97,8 +101,6 @@ def deduplicate_jaccard(database):
             deduplication_database.append(data.copy())
     return deduplication_database
   
-
-
 
 def split(args):
     train_examples = []
