@@ -1,11 +1,10 @@
-import sys
-
-def main():
-    num = input()
-    in1, in2 , in3 = input().split(" ")
-    print(num, in1, in2, in3)
-
-    return in1+in2+in3
-
-if __name__ == "__main__":
-    main()
+s = str(input())
+ans = 0
+print("###")
+print(s)
+print("###")
+for i in range(len(s)//2):
+    if s[i]!=s[-i-1]:
+        print(s[i],s[-i-1])
+        ans += 1
+print(ans)
