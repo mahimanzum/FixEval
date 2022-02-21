@@ -70,7 +70,7 @@ def calculate_similarity(code1_tokens, code2_tokens):
     code2 = ' '.join(code2_tokens)
     return SequenceMatcher(None, code1, code2).ratio()
 
-def deduplicate_jaccard(database):
+def deduplicate_jaccard(database, processor):
     accepted_sub = set()
     problem_to_dataidx = defaultdict(list)
 
@@ -88,7 +88,7 @@ def deduplicate_jaccard(database):
             if(len(data_idx_list)<=3):
                 continue
             for idx in data_idx_list:
-                detector.add_file(id = idx,tokens = jprocessor.tokenize_code(database[idx][1]['code_tokens']))   
+                detector.add_file(id = idx,tokens = processor.tokenize_code(database[idx][1]['code_tokens']))   
             exclude_document_ids = detector.compute_ids_to_exclude()
             for id in exclude_document_ids:
                 exclude_submissions.add(database[idx][1]['submission_id'])
@@ -120,9 +120,9 @@ def split(args):
     problems_of_lang = set()
     for ex in tqdm(data):
         problems_of_lang.add(ex[0]['problem_id'])
-    
+    processor = jprocessor if args.lang == 'java' else pyprocessor
     print("previous data size ", len(data))
-    data = deduplicate_jaccard(data)
+    data = deduplicate_jaccard(data,processor)
     print("data size after deduplication", len(data))
     
 
@@ -148,7 +148,7 @@ def split(args):
     print("len test problems", len(test_problems))
 
     all_data = defaultdict(list)
-    processor = jprocessor if args.lang == 'java' else pyprocessor
+    
     for ex in tqdm(data):
         #ex = json.loads(line)
         try:

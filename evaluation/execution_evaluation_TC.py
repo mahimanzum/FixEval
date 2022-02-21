@@ -59,6 +59,35 @@ def compare_files(file1, file2):
     except Exception as e:
         print("exception = ", e)
         return False
+def run_python(code, test_case_folder,dt):
+
+    with open('garbage/Main.py', 'w', encoding='utf8') as fw:
+        fw.write(code)
+    in_files = glob(test_case_folder+"/in/*")
+    p1 = subprocess.run(["python","-m", "py_compile", "garbage/Main.py"], stderr=PIPE)
+    return_code = p1.returncode
+    if(return_code):
+        print("doesnt compile", return_code)
+        print(code)
+        print(dt['tgt'])
+        sys.exit(0)
+        return False, 0, len(in_files)
+
+    did_not_match = 0
+    for in_file in in_files:
+        cmd = "python garbage/Main.py < {} > garbage/cmd_out.txt".format(in_file)
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=subprocess.DEVNULL, close_fds=True)
+        p.wait()
+        out = in_file.split("/")
+        out[5] = "out"
+        out_file ="/".join(out)
+        out_file = out_file.replace(".in", ".out")
+
+        p2 = subprocess.Popen(["cp",out_file, "garbage/cmd_out_match.txt"])
+        p2.wait()
+        if not compare_files('garbage/cmd_out.txt', 'garbage/cmd_out_match.txt'):
+            did_not_match+=1
+    return True, len(in_files)-did_not_match,len(in_files)
 
 def run_java(code, test_case_folder):
 
@@ -95,7 +124,7 @@ def main(args):
     pyprocessor = PythonProcessor(root_folder=root_folder)
     
     processor = jprocessor if args.lang == 'java' else pyprocessor
-
+    print(processor)
     problemlist=pd.read_csv("../Project_CodeNet/metadata/problem_list.csv")
     problems = defaultdict(list)
     for index, row in tqdm(problemlist.iterrows()):
@@ -157,6 +186,14 @@ def main(args):
                     print("missed a test case", dt['tgt_id'])
                 ran+=correctTC
                 total+=totalTC
+            if args.lang=='py':
+                compiles, correctTC, totalTC = run_python(code,test_case_folder,dt)
+                if(correctTC != totalTC):
+                    print(correctTC, totalTC)
+                    print("missed a test case", dt['tgt_id'])
+                ran+=correctTC
+                total+=totalTC
+            
         else:
             print(dt['src_id'])
             print("a problem found for which we have no test case which should not happen")
