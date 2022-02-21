@@ -178,7 +178,8 @@ def split(args):
                     all_data[ex[0]['problem_id']].append(one_ex)
                 
         except Exception as e:
-            print(e)
+            pass
+            #print(e)
     
     #this splitting is no valid
     #need to split by problem
