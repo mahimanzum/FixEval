@@ -77,6 +77,7 @@ MODEL_PATH=${SAVE_DIR}/checkpoint-best-ppl/pytorch_model.bin;
 RESULT_FILE=${SAVE_DIR}/result.txt;
 GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
 
+
 python run_gen.py \
     --do_test \
     --model_type codet5 \
