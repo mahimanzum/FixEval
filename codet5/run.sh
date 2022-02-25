@@ -122,5 +122,5 @@ count=`ls -1 *.class 2>/dev/null | wc -l`;
 
 
 # remove cached data
-train;
-#evaluate;
+#train;
+evaluate;

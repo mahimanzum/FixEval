@@ -15,6 +15,8 @@ from subprocess import Popen, PIPE, STDOUT
 import sys
 import argparse
 
+from joblib import Parallel, delayed
+
 def getJsonData(JsonFile):
     with open(JsonFile, encoding="utf8") as f:
         data = json.load(f)
@@ -179,7 +181,7 @@ def main(args):
     ran, total= 0, 0
     uniq = set()
     invalid_problems = ['p02833','p02764','p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
-    for dt in tqdm(data[629:]): #9630
+    for dt in tqdm(data[11378:]): #9630
         if dt['tgt_id'].split("_")[0] in problemid_to_tc.keys():
             if dt['tgt_id'].split("_")[0] in invalid_problems:
                 print(" an invalid problem is in test which should not happen")
@@ -211,7 +213,7 @@ def main(args):
             print("a problem found for which we have no test case which should not happen")
             return
     
-    print("ran, total = ", ran, total)
+    print("ran, total, success = ", ran, total, ran/total)
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

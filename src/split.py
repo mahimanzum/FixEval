@@ -7,11 +7,13 @@ from pprint import pprint
 from glob import glob
 from collections import defaultdict
 import sys
+from difflib import SequenceMatcher
 import pandas as pd
 from random import sample
 from deduplication import DuplicateDetector
 sys.path.append("..")
 random.seed(1234)
+from joblib import Parallel, delayed
 
 from codegen.preprocessing.lang_processors.java_processor import JavaProcessor
 from codegen.preprocessing.lang_processors.python_processor import PythonProcessor
@@ -73,13 +75,23 @@ def calculate_similarity(code1_tokens, code2_tokens):
 def deduplicate_jaccard(database, processor):
     accepted_sub = set()
     problem_to_dataidx = defaultdict(list)
-
+    sim = []
     for idx,dt in enumerate(database):    
         if dt[1]['submission_id'] not in accepted_sub:
             accepted_sub.add(dt[1]['submission_id'])
             problem_to_dataidx[dt[1]['problem_id']].append(idx)
     duplicate_submission_id = []
+    def solve(problem):
+        print(len(sim))
+        for idx in problem_to_dataidx[problem]:
+            for idx2 in problem_to_dataidx[problem]:
+                if idx!=idx2:
+                    sim.append(calculate_similarity(database[idx][1]['code_tokens'], database[idx2][1]['code_tokens']))
     
+    #Parallel(n_jobs=8, prefer="threads")(delayed(solve)(problem) for problem in tqdm(problem_to_dataidx.keys()))
+    #print(len(sim))
+    #print(sum(sim) / len(sim))
+    #return []
     exclude_submissions = set()
     for problem in tqdm(problem_to_dataidx.keys()):
         try:
@@ -100,7 +112,7 @@ def deduplicate_jaccard(database, processor):
         if data[1]['submission_id'] not in exclude_submissions:
             deduplication_database.append(data.copy())
     return deduplication_database
-  
+    
 
 def split(args):
     train_examples = []
@@ -111,7 +123,7 @@ def split(args):
     files = args.src_file
     #print(files)
     data = []
-    for file in glob(files+'*.json'):
+    for file in glob(files+'*.json')[:2]:
         print(file)
         with open(file, 'r') as f:
             temp = json.load(f)
@@ -123,6 +135,7 @@ def split(args):
     processor = jprocessor if args.lang == 'java' else pyprocessor
     print("previous data size ", len(data))
     data = deduplicate_jaccard(data,processor)
+    sys.exit(0)
     print("data size after deduplication", len(data))
     
 
