@@ -31,6 +31,9 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
     ├── process_json.py
     └── split.py
 ```
+# Additional Downloads (Incomplete link)
+Need to download the data folder in the parent directory
+Download the atcoder test cases folder in the src or evaluation directory and change the code
 
 # Environment creation  information
 

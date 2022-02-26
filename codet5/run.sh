@@ -119,6 +119,13 @@ python $evaluator_script/compile.py \
 count=`ls -1 *.class 2>/dev/null | wc -l`;
 [[ $count != 0 ]] && rm *.class;
 
+echo "Evaluating Execution Based Evaluation Accuracy"
+cd $CURRENT_DIR;
+python $evaluator_script/execution_evaluation_TC.py \
+    --references $GOUND_TRUTH_PATH \
+    --predictions $SAVE_DIR/test.output \
+    --language $TARGET \
+    2>&1 | tee $RESULT_FILE;
 }
 
 

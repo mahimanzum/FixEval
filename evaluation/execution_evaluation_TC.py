@@ -130,9 +130,9 @@ def run_java(code, test_case_folder, idx):
 
 def main(args):
 
-    data = getJsonData(args.input)
+    data = getJsonData(args.references)
     output_programs = []
-    with open(args.model_output, encoding='utf8') as f:
+    with open(args.predictions, encoding='utf8') as f:
         for line in f:
             output_programs.append(line.strip())
 
@@ -140,7 +140,7 @@ def main(args):
     jprocessor = JavaProcessor(root_folder=root_folder)
     pyprocessor = PythonProcessor(root_folder=root_folder)
     
-    processor = jprocessor if args.lang == 'java' else pyprocessor
+    processor = jprocessor if args.language == 'java' else pyprocessor
     #print(processor)
     problemlist=pd.read_csv("../Project_CodeNet/metadata/problem_list.csv")
     problems = defaultdict(list)
@@ -197,7 +197,7 @@ def main(args):
             uniq.add(dt['tgt_id'])
             
             test_case_folder = problemid_to_tc[dt['tgt_id'].split("_")[0]]
-            if args.lang=='java':
+            if args.language=='java':
                 compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['src']),test_case_folder, idx)
@@ -206,7 +206,7 @@ def main(args):
                     ran_now +=correctTC
                     total+=totalTC
 
-            if args.lang=='py':
+            if args.language=='py':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['src']),test_case_folder, idx)
@@ -226,9 +226,11 @@ def main(args):
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_output", type=str, required=True, help="Path to sources")
-    parser.add_argument("--input", type=str, required=True, help="Path to sources")
-    parser.add_argument("--lang", type=str, required=True, help="Name of language")
+
+    parser.add_argument('--references', help="filename of the labels, in jsonl format.")
+    parser.add_argument('--predictions', help="filename of the leaderboard predictions, in txt format.")
+    
+    parser.add_argument("--language", type=str, required=True, help="Name of language")
     parser.add_argument("--test_cases", type=str, required=True, help="Name of language")
     
     #../src/atcoder_test_cases
