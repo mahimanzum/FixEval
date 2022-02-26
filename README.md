@@ -7,11 +7,11 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet_metadata.tar.gz?_ga=2.191718442.1486692882.1645896851-1137262026.1645896851
 
 # folder structure (Need to edit)
-├── README.md
-├── data
-├── gen
-│   ├── analysis
-│   ├── data-preparation
+├── README.md <br>
+├── data <br>
+├── gen <br>
+│   ├── analysis <br>
+│   ├── data-preparation <br>
 │   └── paper
 └── src
     ├── analysis
