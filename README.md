@@ -27,11 +27,11 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
 
 # creating preprocessed json
 make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
-```
-processed is a dictionary containing a list of user_id's containing information about each user processed.keys().
-processed['user_id'] is a list containing a list of problem_id's solved by that user.
-processed['user_id']['problem_id'] contains list of tuples. Each tuple consists of information about a submission (submission_id,date,language,original_language,filename_ext,status)
-```
+
+processed is a dictionary containing a list of user_id's containing information about each user processed.keys(). <br>
+processed['user_id'] is a list containing a list of problem_id's solved by that user. <br>
+processed['user_id']['problem_id'] contains list of tuples. Each tuple consists of information about a submission (submission_id,date,language,original_language,filename_ext,status) <br>
+
 
 to create this(May need to change the path informations):
 ```
