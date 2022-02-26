@@ -10,15 +10,26 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
 # folder structure (Need to edit)
 ```
 ├── README.md 
-├── data 
-├── gen 
-│   ├── analysis 
-│   ├── data-preparation 
-│   └── paper
+├── third_party 
+├── codet5
+│   ├── run.sh 
+│   ├── configs.py
+│   └── models.py
+├── data
+│   ├── java
+│   │    ├──jsons
+│   │    ├──processed
+│   ├── Python
+│        ├──jsons
+│        ├──processed
+├── evaluation
+│   ├── CodeBLEU 
+│   ├── codegen 
+│   └── execution_evaluation_TC.py
 └── src
-    ├── analysis
-    ├── data-preparation
-    └── paper
+    ├── make_submission_list_json.py
+    ├── process_json.py
+    └── split.py
 ```
 
 # Environment creation  information
