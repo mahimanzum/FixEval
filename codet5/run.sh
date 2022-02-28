@@ -8,6 +8,7 @@ export PYTHONPATH=$CODE_DIR_HOME;
 
 evaluator_script="${CODE_DIR_HOME}/evaluation";
 codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
+TEST_CASES="../src/atcoder_test_cases";
 
 GPU=${1:-0};
 SOURCE=${2:-java};
@@ -77,7 +78,7 @@ MODEL_PATH=${SAVE_DIR}/checkpoint-best-ppl/pytorch_model.bin;
 RESULT_FILE=${SAVE_DIR}/result.txt;
 GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
 
-
+<<com
 python run_gen.py \
     --do_test \
     --model_type codet5 \
@@ -118,14 +119,14 @@ python $evaluator_script/compile.py \
 
 count=`ls -1 *.class 2>/dev/null | wc -l`;
 [[ $count != 0 ]] && rm *.class;
-
+com
 echo "Evaluating Execution Based Evaluation Accuracy"
 cd $CURRENT_DIR;
 python $evaluator_script/execution_evaluation_TC.py \
     --references $GOUND_TRUTH_PATH \
     --predictions $SAVE_DIR/test.output \
     --language $TARGET \
-    2>&1 | tee $RESULT_FILE;
+    --test_cases $TEST_CASES
 }
 
 

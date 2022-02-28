@@ -6,6 +6,13 @@ from argparse import ArgumentParser
 
 # 'settings.yaml' file should be in the same directory as this script
 # 'settings.yaml' should contain the following:
+# try locally once because the client_secrets.json file is created for local host. Then once the credentials.json is saved in a file you can upload in the remote server to run there.
+'''
+Some useful links
+pydrive in local pc: https://www.youtube.com/watch?v=2mnKE9IERt4&t=103s
+simple auth: https://pythonhosted.org/PyDrive/quickstart.html#authentication
+remote auth with setting: https://pythonhosted.org/PyDrive/oauth.html
+'''
 """
 client_config_backend: settings
 client_config:
@@ -75,10 +82,14 @@ def upload_folder(drive, folder_id, src_folder):
 
 
 if __name__ == '__main__':
+    #python upload_to_drive.py --source ../for_uploading --destination 1rKWODQ_bLKGeOgv2JSmFI0M-7roHIJ_8
+    # this uploads all files in the folder named for_uploading
     parser = ArgumentParser(description="Upload local file/folder to Google Drive")
     parser.add_argument('-s', '--source', type=str, help='Folder path to upload')
     parser.add_argument('-d', '--destination', type=str, help='Destination Folder ID in Google Drive')
     args = parser.parse_args()
+
+
 
     # following requires in our servers
     # httplib2==0.15.0, google-api-python-client==1.6

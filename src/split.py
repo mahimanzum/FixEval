@@ -26,7 +26,7 @@ def getJsonData(JsonFile):
     with open(JsonFile, encoding="utf8") as f:
         data = json.load(f)
     return data
-def load_collected_test_suit():
+def load_collected_test_suit(args):
     problemlist=pd.read_csv("../Project_CodeNet/metadata/problem_list.csv")
     problems = defaultdict(list)
     for index, row in tqdm(problemlist.iterrows()):
@@ -40,28 +40,28 @@ def load_collected_test_suit():
             if("AtCoder Grand Contest" in row['name']):
                 number = row['name'].split(" ")[3]
                 problems["AGC"+number].append(row['id'])
-    folders = glob("atcoder_test_cases/*")
+    folders = glob(f"{args.test_cases}/*")
 
     final_keys = []
     for idx in range(len(folders)):
-        folders[idx] = folders[idx].replace("atcoder_test_cases/", "")
+        folders[idx] = folders[idx].replace(f"{args.test_cases}/", "")
     #print(folders)
     for key in problems.keys():
         if key in folders:
-            if len(problems[key]) == len(glob("atcoder_test_cases/"+key+"/*")):
+            if len(problems[key]) == len(glob(f"{args.test_cases}/"+key+"/*")):
                 final_keys.append(key)
                 
         elif key.lower() in folders :
-            if len(problems[key]) == len(glob("atcoder_test_cases/"+ key.lower() +"/*")):
+            if len(problems[key]) == len(glob(f"{args.test_cases}/"+ key.lower() +"/*")):
                 final_keys.append(key)
 
     problemid_to_tc = {}
     for key in problems:
         if(key in final_keys):
             for idx, prob_id in enumerate(problems[key]):
-                folder_list = glob("atcoder_test_cases/"+key+"/*")
+                folder_list = glob(f"{args.test_cases}/"+key+"/*")
                 if(len(folder_list)==0):
-                    folder_list = glob("atcoder_test_cases/"+key.lower()+"/*")
+                    folder_list = glob(f"{args.test_cases}/"+key.lower()+"/*")
                 problemid_to_tc[prob_id] = folder_list[idx]
     
     print("len(problemid_to_tc) = ", len(problemid_to_tc))
@@ -139,7 +139,8 @@ def split(args):
     print("data size after deduplication", len(data))
     
 
-    problemid_to_tc = load_collected_test_suit()
+    problemid_to_tc = load_collected_test_suit(args)
+
     invalid_problems = ['p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
     print("len of problems solved in ", args.lang, len(problems_of_lang))
     
@@ -269,6 +270,7 @@ if __name__ == '__main__':
     parser.add_argument("--src_file", type=str, help='Source file', default='../data/java/jsons/')
     parser.add_argument("--src_dir", type=str, help='Source directory', default='../data/java/processed/')
     parser.add_argument("--out_dir", type=str, help='Output directory', default='../data/java/processed')
+    parser.add_argument("--test_cases", type=str, required=True, help="Name of language",default='../data/atcoder_test_cases')
     args = parser.parse_args()
 
     split(args)
