@@ -8,7 +8,7 @@ export PYTHONPATH=$CODE_DIR_HOME;
 
 evaluator_script="${CODE_DIR_HOME}/evaluation";
 codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
-TEST_CASES="../src/atcoder_test_cases";
+TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
 SOURCE=${2:-java};

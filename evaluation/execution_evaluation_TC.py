@@ -44,12 +44,16 @@ def print_error(l1, l2):
 def compare_files(file1, file2):
     try:
         with open(file1) as f1, open(file2) as f2: 
-            content1 = f1.read().split()
-            content2 = f2.read().split()
+            content1 = f1.read().strip().split()
+            content2 = f2.read().strip().split()
             #print(content1)
             #print("########")
             #print(content2)
             if(len(content1) != len(content2)):
+                #print("length not same")
+                #print(content1)
+                #print("#####")
+                #print(content2)
                 return False
             for l1, l2 in zip(content1, content2):
                 if l1.strip() != l2.strip(): 
@@ -88,8 +92,6 @@ def run_python(code, test_case_folder, idx):
 
     if(return_code):
         print("doesnt compile", return_code)
-        #print(code)
-        #sys.exit(0)
         return False, 0, len(in_files)
 
     did_not_match = 0
@@ -108,16 +110,15 @@ def run_python(code, test_case_folder, idx):
         except TimeoutExpired:
             p.kill()
         
-        out_file = in_file.replace(".in", ".out", 1)
+        out_file = in_file.replace("in", "out", 1).replace(".in", ".out", 1)
 
         p2 = subprocess.Popen(["cp",out_file, f"{root_path}/cmd_out_match.txt"])
         p2.wait()
         if not compare_files(f'{root_path}/cmd_out.txt', f'{root_path}/cmd_out_match.txt'):
             did_not_match+=1
-            print(in_file)
+            #print(in_file)
     
     subprocess.run(["rm","-rf",f"{root_path}"])
-    
     return True, len(in_files)-did_not_match,len(in_files)
 
 def run_java(code, test_case_folder, idx):
@@ -136,7 +137,7 @@ def run_java(code, test_case_folder, idx):
         return False, 0, len(in_files)
 
     did_not_match = 0
-    #print(in_files)
+    
     for in_file in in_files:
         #print(in_file)
         cmd = f"java -cp {root_path} Main < {in_file} > {root_path}/cmd_out.txt"
@@ -147,14 +148,19 @@ def run_java(code, test_case_folder, idx):
         try:
             outs, errs = p.communicate(timeout=5)
         except TimeoutExpired:
+            print("TLE heppened")
             p.kill()
         
-        out_file = in_file.replace(".in", ".out", 1)
-
+        out_file = in_file.replace("in", "out", 1).replace(".in", ".out", 1)
         p2 = subprocess.Popen(["cp",out_file, f"{root_path}/cmd_out_match.txt"])
         p2.wait()
-        if not compare_files(f'{root_path}/cmd_out.txt', f'{root_path}/cmd_out_match.txt'):
+        #print(in_file)
+        #print(out_file)
+
+        #print(open(f"{root_path}/cmd_out_match.txt", 'r').read())
+        if not compare_files(f'{root_path}/cmd_out.txt', f'{root_path}/cmd_out_match.txt'): 
             did_not_match+=1
+            #print("comes")
 
     subprocess.run(["rm","-rf",f"{root_path}"])
     
@@ -213,7 +219,7 @@ def main(args):
     
     print("len(problemid_to_tc) = ", len(problemid_to_tc))
     
-    ran_prev,ran_now, total= 0, 0,0
+    ran_prev, ran_now, total, data_count = 0, 0, 0, 0
     
     invalid_problems = ['p02833','p02764','p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
     
@@ -221,6 +227,7 @@ def main(args):
         nonlocal ran_prev
         nonlocal ran_now
         nonlocal total
+        nonlocal data_count
         if dt['tgt_id'].split("_")[0] in problemid_to_tc.keys():
             if dt['tgt_id'].split("_")[0] in invalid_problems:
                 print(" an invalid problem is in test which should not happen", dt['tgt_id'])
@@ -240,7 +247,9 @@ def main(args):
                     ran_now +=correctTC
                     #print("for output: ", compiles, correctTC, totalTC)
                     total+=totalTC
-                    #print("")
+                    data_count+=1
+                    #print("ran_prev,ran_now, total ", ran_prev,ran_now, total)
+                    print(data_count)
 
             if args.language=='py':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
@@ -254,13 +263,13 @@ def main(args):
             print(dt['src_id'])
             print("a problem found for which we have no test case which should not happen")
             return
-    #for idx, dt in enumerate(data[:50]):
-    #    execute_and_evaluate(idx, dt)
+    for idx, dt in enumerate(data[:50]):
+        execute_and_evaluate(idx, dt)
 
-    Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in tqdm(enumerate(data[:50]))) #, prefer="threads"
+    #Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in tqdm(enumerate(data[:50]))) #, prefer="threads"
         
     
-    print("ran_prev,ran_now, total, ran_prev/total, ran_now/total ", ran_prev,ran_now, total, ran_prev/total,ran_now/total )
+    print("ran_prev,ran_now, total, data_count, ran_prev/total, ran_now/total ", ran_prev,ran_now, total,data_count,ran_prev/total,ran_now/total )
             
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -271,6 +280,5 @@ if __name__ == "__main__":
     parser.add_argument("--language", type=str, required=True, help="Name of language")
     parser.add_argument("--test_cases", type=str, required=True, help="Name of language")
     
-    #../src/atcoder_test_cases
     params = parser.parse_args()
     main(params)        
