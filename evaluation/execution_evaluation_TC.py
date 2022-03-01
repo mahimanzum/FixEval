@@ -269,7 +269,7 @@ def main(args):
                             processor.detokenize_code(output_programs[idx])+"\n##########\n"+
                             "Correct Code:\n"+processor.detokenize_code(dt['tgt']))
 
-            if args.language=='py':
+            if args.language=='python':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['src']),test_case_folder, idx)

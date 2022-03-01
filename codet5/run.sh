@@ -11,20 +11,20 @@ codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
 TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
-SOURCE=${2:-java};
-TARGET=${3:-java};
+SOURCE=${2:-python};
+TARGET=${3:-python};
 DATA_SRC=${4:-codenet};
 
 export CUDA_VISIBLE_DEVICES=$GPU
 echo "Source: $SOURCE Target: $TARGET"
 
 if [[ $DATA_SRC == 'codenet' ]]; then
-    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;
+    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;#with_verdict
 elif [[ $DATA_SRC == 'g4g' ]]; then
     path_2_data=${CODE_DIR_HOME}/data/g4g_functions;
 fi
 
-SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};
+SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};#with_verdict
 CACHE_DIR=${SAVE_DIR}/cached_data
 mkdir -p $SAVE_DIR
 mkdir -p $CACHE_DIR
@@ -78,7 +78,7 @@ MODEL_PATH=${SAVE_DIR}/checkpoint-best-ppl/pytorch_model.bin;
 RESULT_FILE=${SAVE_DIR}/result.txt;
 GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
 
-<<com
+
 python run_gen.py \
     --do_test \
     --model_type codet5 \
@@ -119,7 +119,8 @@ python $evaluator_script/compile.py \
 
 count=`ls -1 *.class 2>/dev/null | wc -l`;
 [[ $count != 0 ]] && rm *.class;
-com
+
+<<com
 echo "Evaluating Execution Based Evaluation Accuracy"
 cd $CURRENT_DIR;
 python $evaluator_script/execution_evaluation_TC.py \
@@ -127,9 +128,11 @@ python $evaluator_script/execution_evaluation_TC.py \
     --predictions $SAVE_DIR/test.output \
     --language $TARGET \
     --test_cases $TEST_CASES
+com
 }
 
 
+
 # remove cached data
-#train;
+train;
 evaluate;
