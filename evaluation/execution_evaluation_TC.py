@@ -140,16 +140,16 @@ def run_java(code, test_case_folder, idx):
     
     for in_file in in_files:
         #print(in_file)
-        cmd = f"java -cp {root_path} Main < {in_file} > {root_path}/cmd_out.txt"
-        #print(open(f"{root_path}/cmd_out.txt", 'r').read())
-        p = Popen(cmd, shell=True, stdin=PIPE, stderr=subprocess.DEVNULL,stdout=PIPE, close_fds=True)# stderr=subprocess.DEVNULL
-        
+        cmd = f"java -cp {root_path}/ Main < {in_file} > {root_path}/cmd_out.txt"
+        p = Popen(cmd, shell=True, stdin=PIPE,stderr=subprocess.DEVNULL,stdout=PIPE, close_fds=True)# stderr=subprocess.DEVNULL
+        #p.wait()
         # for time Limit exceeded cases
         try:
             outs, errs = p.communicate(timeout=5)
         except TimeoutExpired:
             print("TLE heppened")
             p.kill()
+        #print(open(f"{root_path}/cmd_out.txt", 'r').read())
         
         out_file = in_file.replace("in", "out", 1).replace(".in", ".out", 1)
         p2 = subprocess.Popen(["cp",out_file, f"{root_path}/cmd_out_match.txt"])
@@ -194,7 +194,7 @@ def main(args):
                 number = row['name'].split(" ")[3]
                 problems["AGC"+number].append(row['id'])
     folders = glob(f"{args.test_cases}/*")
-
+    #print(problems["ABC157"])
     final_keys = []
     for idx in range(len(folders)):
         folders[idx] = folders[idx].replace(f"{args.test_cases}/", "")
@@ -207,17 +207,20 @@ def main(args):
         elif key.lower() in folders :
             if len(problems[key]) == len(glob(f"{args.test_cases}/"+ key.lower() +"/*")):
                 final_keys.append(key)
-
+    #print(problems['ABC157'])
     problemid_to_tc = {}
     for key in problems:
         if(key in final_keys):
+            #print(key)
             for idx, prob_id in enumerate(problems[key]):
-                folder_list = glob(f"{args.test_cases}/"+key+"/*")
+                folder_list = sorted(glob(f"{args.test_cases}/"+key+"/*"))
                 if(len(folder_list)==0):
-                    folder_list = glob(f"{args.test_cases}/"+key.lower()+"/*")
+                    folder_list = sorted(glob(f"{args.test_cases}/"+key.lower()+"/*"))
+                #if key =="ABC157":
+                #    print(folder_list)
                 problemid_to_tc[prob_id] = folder_list[idx]
-    
-    print("len(problemid_to_tc) = ", len(problemid_to_tc))
+    print(problemid_to_tc['p02759'])
+    #print("len(problemid_to_tc) = ", len(problemid_to_tc))
     
     ran_prev, ran_now, total, data_count = 0, 0, 0, 0
     
@@ -228,28 +231,30 @@ def main(args):
         nonlocal ran_now
         nonlocal total
         nonlocal data_count
+        nonlocal invalid_problems
         if dt['tgt_id'].split("_")[0] in problemid_to_tc.keys():
             if dt['tgt_id'].split("_")[0] in invalid_problems:
                 print(" an invalid problem is in test which should not happen", dt['tgt_id'])
                 return
                 #continue
+            #print(dt['tgt_id'], problemid_to_tc[dt['tgt_id'].split("_")[0]])
             test_case_folder = problemid_to_tc[dt['tgt_id'].split("_")[0]]
             if args.language=='java':
                 compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
-                #print("for tgt: ", compiles, correctTC, totalTC)
+                print("for tgt: ", compiles, correctTC, totalTC)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['src']),test_case_folder, idx)
                     ran_prev +=correctTC
-                    #print("for src: ", compiles, correctTC, totalTC)
-                    #print(idx, dt['src_id'] , dt['src_verdict'])
+                    print("for src: ", compiles, correctTC, totalTC)
+                    print(idx, dt['src_id'] , dt['src_verdict'])
                     
                     compiles, correctTC, totalTC = run_java(output_programs[idx],test_case_folder, idx)
                     ran_now +=correctTC
-                    #print("for output: ", compiles, correctTC, totalTC)
+                    print("for output: ", compiles, correctTC, totalTC)
                     total+=totalTC
                     data_count+=1
-                    #print("ran_prev,ran_now, total ", ran_prev,ran_now, total)
-                    print(data_count)
+                    print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
+                    print("")
 
             if args.language=='py':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
