@@ -225,8 +225,9 @@ def main(args):
     ran_prev, ran_now, total, data_count = 0, 0, 0, 0
     
     invalid_problems = ['p02833','p02764','p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
-    
+    lock = threading.RLock()
     def execute_and_evaluate(idx, dt):
+        nonlocal lock
         nonlocal ran_prev
         nonlocal ran_now
         nonlocal total
@@ -244,34 +245,37 @@ def main(args):
                 #print("for tgt: ", compiles, correctTC, totalTC)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['src']),test_case_folder, idx)
-                    ran_prev +=correctTC
+                    with lock:
+                        ran_prev +=correctTC
                     #print("for src: ", compiles, correctTC, totalTC)
                     #print(idx, dt['src_id'] , dt['src_verdict'])
                     
                     compiles, correctTC, totalTC = run_java(output_programs[idx],test_case_folder, idx)
-                    ran_now +=correctTC
-                    #print("for output: ", compiles, correctTC, totalTC)
-                    total+=totalTC
-                    data_count+=1
-                    print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
-                    #print("")
+                    with lock:
+                        ran_now +=correctTC
+                        total+=totalTC
+                        data_count+=1
+                        print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
+                    
 
             if args.language=='py':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['src']),test_case_folder, idx)
-                    ran_prev +=correctTC
+                    with lock:
+                        ran_prev +=correctTC
                     compiles, correctTC, totalTC = run_python(output_programs[idx],test_case_folder, idx)
-                    ran_now +=correctTC
-                    total+=totalTC
+                    with lock:
+                        ran_now +=correctTC
+                        total+=totalTC
         else:
             print(dt['src_id'])
             print("a problem found for which we have no test case which should not happen")
             return
-    for idx, dt in enumerate(data[:50]):
-        execute_and_evaluate(idx, dt)
+    #for idx, dt in enumerate(data[:200]):
+    #    execute_and_evaluate(idx, dt)
 
-    #Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in tqdm(enumerate(data[:50]))) #, prefer="threads"
+    Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data[:200])) #, prefer="threads"
         
     
     print("ran_prev,ran_now, total, data_count, ran_prev/total, ran_now/total ", ran_prev,ran_now, total,data_count,ran_prev/total,ran_now/total )
