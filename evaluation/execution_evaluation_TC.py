@@ -145,9 +145,9 @@ def run_java(code, test_case_folder, idx):
         #p.wait()
         # for time Limit exceeded cases
         try:
-            outs, errs = p.communicate(timeout=5)
+            outs, errs = p.communicate(timeout=10)
         except TimeoutExpired:
-            print("TLE heppened")
+            #print("TLE heppened")
             p.kill()
         #print(open(f"{root_path}/cmd_out.txt", 'r').read())
         
@@ -219,7 +219,7 @@ def main(args):
                 #if key =="ABC157":
                 #    print(folder_list)
                 problemid_to_tc[prob_id] = folder_list[idx]
-    print(problemid_to_tc['p02759'])
+    #print(problemid_to_tc['p02759'])
     #print("len(problemid_to_tc) = ", len(problemid_to_tc))
     
     ran_prev, ran_now, total, data_count = 0, 0, 0, 0
@@ -241,20 +241,20 @@ def main(args):
             test_case_folder = problemid_to_tc[dt['tgt_id'].split("_")[0]]
             if args.language=='java':
                 compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
-                print("for tgt: ", compiles, correctTC, totalTC)
+                #print("for tgt: ", compiles, correctTC, totalTC)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['src']),test_case_folder, idx)
                     ran_prev +=correctTC
-                    print("for src: ", compiles, correctTC, totalTC)
-                    print(idx, dt['src_id'] , dt['src_verdict'])
+                    #print("for src: ", compiles, correctTC, totalTC)
+                    #print(idx, dt['src_id'] , dt['src_verdict'])
                     
                     compiles, correctTC, totalTC = run_java(output_programs[idx],test_case_folder, idx)
                     ran_now +=correctTC
-                    print("for output: ", compiles, correctTC, totalTC)
+                    #print("for output: ", compiles, correctTC, totalTC)
                     total+=totalTC
                     data_count+=1
                     print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
-                    print("")
+                    #print("")
 
             if args.language=='py':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
