@@ -164,7 +164,6 @@ def run_java(code, test_case_folder, idx):
             #print("comes")
 
     subprocess.run(["rm","-rf",f"{root_path}"])
-    
     return True, len(in_files)-did_not_match,len(in_files)
 
 def main(args):

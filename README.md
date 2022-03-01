@@ -69,6 +69,10 @@ python split.py --lang py --src_file ../data/Python/jsons/ --src_dir ../data/Pyt
 
 # training the model and evaluating on the data
 To run the codet5 model go to that folder and use run.sh. This will also evalualte the model on execution_evaluation, BLEU, CodeBleu
+some changes are required in run.sh. <br>
+Change source and target languages online 14-15-> from these ['java', 'python'] <br>
+Change path_2_data line 22 at the end folder name as 'processed' or processed_with_verdict <br>
+Change Line 27 , Model and Cached data save directory to be consistent with the data as well. Append "with_verdict" if associated data path contains "with_verdict" as well. <br>
 ```
 cd codet5/
 nohup ./run.sh

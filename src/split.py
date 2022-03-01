@@ -264,6 +264,7 @@ def prepare(args):
 
 
 if __name__ == '__main__':
+    
     #lang either java or python
     # default java
     # python command to run: python split.py --lang python --src_file ../data/python/jsons/ --src_dir ../data/python/processed_with_verdict/ --out_dir ../data/python/processed_with_verdict/ --test_cases ../data/atcoder_test_cases --with_verdict yes
@@ -277,6 +278,6 @@ if __name__ == '__main__':
     parser.add_argument("--with_verdict", type=str, help="Name of language",default='yes')
     
     args = parser.parse_args()
-
-    split(args)
+    #call single function if jsons are already created
+    #split(args)
     prepare(args)
