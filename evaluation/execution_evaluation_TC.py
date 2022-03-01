@@ -17,6 +17,7 @@ import argparse
 import os
 from joblib import Parallel, delayed
 from subprocess import TimeoutExpired
+import threading
 
 def getJsonData(JsonFile):
     with open(JsonFile, encoding="utf8") as f:
@@ -225,6 +226,11 @@ def main(args):
     ran_prev, ran_now, total, data_count = 0, 0, 0, 0
     
     invalid_problems = ['p02833','p02764','p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
+    
+    def write_to_file(idx, content):
+        with open(f"results/{idx}.txt", 'w+', encoding='utf8') as fw:
+            fw.write(content)
+
     lock = threading.RLock()
     def execute_and_evaluate(idx, dt):
         nonlocal lock
@@ -241,22 +247,27 @@ def main(args):
             #print(dt['tgt_id'], problemid_to_tc[dt['tgt_id'].split("_")[0]])
             test_case_folder = problemid_to_tc[dt['tgt_id'].split("_")[0]]
             if args.language=='java':
-                compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
+                with lock:
+                    compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
                 #print("for tgt: ", compiles, correctTC, totalTC)
                 if(compiles and correctTC == totalTC):
                     compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['src']),test_case_folder, idx)
                     with lock:
                         ran_prev +=correctTC
-                    #print("for src: ", compiles, correctTC, totalTC)
-                    #print(idx, dt['src_id'] , dt['src_verdict'])
-                    
-                    compiles, correctTC, totalTC = run_java(output_programs[idx],test_case_folder, idx)
-                    with lock:
+                        prev = ran_prev
+                        #print("for src: ", compiles, correctTC, totalTC)
+                        #print(idx, dt['src_id'] , dt['src_verdict'])
+                        compiles, correctTC, totalTC = run_java(processor.detokenize_code(output_programs[idx]),test_case_folder, idx)
                         ran_now +=correctTC
+                        now = ran_now
                         total+=totalTC
                         data_count+=1
                         print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
-                    
+                        if(now>prev):
+                            write_to_file(idx, "Previous_code: \n"+
+                            processor.detokenize_code(dt['src'])+"\n ###############\n"+"Output Code:\n"+
+                            processor.detokenize_code(output_programs[idx])+"\n##########\n"+
+                            "Correct Code:\n"+processor.detokenize_code(dt['tgt']))
 
             if args.language=='py':
                 compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
@@ -275,7 +286,7 @@ def main(args):
     #for idx, dt in enumerate(data[:200]):
     #    execute_and_evaluate(idx, dt)
 
-    Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data[:200])) #, prefer="threads"
+    Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data)) #, prefer="threads"
         
     
     print("ran_prev,ran_now, total, data_count, ran_prev/total, ran_now/total ", ran_prev,ran_now, total,data_count,ran_prev/total,ran_now/total )
