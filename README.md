@@ -36,8 +36,10 @@ Need to download the data folder in the parent directory
 Download the atcoder test cases folder in the src or evaluation directory and change the code. (Change needed in split.py and execution_evaluation_TC.py)
 
 # Environment creation  information
-
-
+```
+conda env create -n python -f src/environment.yml
+conda activate python36
+```
 
 # creating preprocessed json
 make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
