@@ -53,4 +53,4 @@ if __name__=="__main__":
     #    delayed(process)(row['id'], lock) for index, row in problemListCsvDF.iterrows())
     for index, row in tqdm(problemListCsvDF.iterrows(), total = len(problemListCsvDF)):
         process(row['id'])
-    write(submissions, "processed.json")
+    write(submissions, "data/processed.json")

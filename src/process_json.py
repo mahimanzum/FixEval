@@ -15,7 +15,7 @@ def getJsonData(JsonFile):
         data = json.load(f)
     return data
 
-data = getJsonData("processed.json")
+data = getJsonData("data/processed.json")
 ans = 0
 for user in tqdm(data.keys()):
     for problem_id in data[user].keys():
@@ -122,7 +122,7 @@ def write_output_to_json_file(file_name, one_example={}, fnl = False):
         if not fnl:
             python_solutions.append(one_example)
         if(fnl or len(python_solutions)==10000):
-            pth = '../data/Python/jsons/{}.json'.format(python_file_id)
+            pth = '../data/python/jsons/{}.json'.format(python_file_id)
             with open(pth, 'w+', encoding="utf8") as f:
                 json.dump(python_solutions, f)
             python_solutions=[]
@@ -326,13 +326,13 @@ def process_user(user_id):
 if __name__=="__main__":
     #Parallel(n_jobs=8,prefer="threads")(delayed(process_user)(user) for user in tqdm(list(data.keys())))
     index = 0
-    process_user('u745688558')
-    #for user in tqdm(list(data.keys())): #[:10]
-    #    print("Processing index: {}, User: {}".format(index, user))
-    #    process_user(user)
-    #    index+=1
-    #write_output_to_json_file("Python", fnl=True)
-    #write_output_to_json_file("Java", fnl=True)
+    #process_user('u745688558')
+    for user in tqdm(list(data.keys())): #[:10]
+        print("Processing index: {}, User: {}".format(index, user))
+        process_user(user)
+        index+=1
+    write_output_to_json_file("Python", fnl=True)
+    write_output_to_json_file("Java", fnl=True)
     
     
 # stuck in u326609687 idx 30535+46 30581 near
