@@ -20,8 +20,12 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
 │   │    ├──jsons
 │   │    ├──processed
 │   ├── Python
-│        ├──jsons
-│        ├──processed
+│   │    ├──jsons
+│   │    ├──processed
+│   ├── atcoder_test_cases
+│   └── processed.json
+│   
+│
 ├── evaluation
 │   ├── CodeBLEU 
 │   ├── codegen 

@@ -57,7 +57,7 @@ python run_gen.py \
     --num_train_epochs $NUM_TRAIN_EPOCHS \
     --warmup_steps 100 \
     --learning_rate $lr \
-    --patience 3 \
+    --patience 2 \
     --data_dir $path_2_data \
     --cache_path $CACHE_DIR \
     --res_dir $SAVE_DIR \
