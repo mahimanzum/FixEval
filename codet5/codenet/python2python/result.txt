@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/mahim/program_repair/CodeNet/evaluation/evaluator.py", line 8, in <module>
+    from tqdm import tqdm
+ModuleNotFoundError: No module named 'tqdm'
+['/home/mahim/program_repair/CodeNet/evaluation/CodeBLEU', '/home/mahim/program_repair/CodeNet', '/usr/lib/python36.zip', '/usr/lib/python3.6', '/usr/lib/python3.6/lib-dynload', '/usr/local/lib/python3.6/dist-packages', '/usr/lib/python3/dist-packages', '.']
+Traceback (most recent call last):
+  File "calc_code_bleu.py", line 14, in <module>
+    from evaluation.CodeBLEU import bleu,weighted_ngram_match, syntax_match, dataflow_match
+  File "/home/mahim/program_repair/CodeNet/evaluation/CodeBLEU/syntax_match.py", line 5, in <module>
+    from evaluation.CodeBLEU.parser import (
+  File "/home/mahim/program_repair/CodeNet/evaluation/CodeBLEU/parser/__init__.py", line 8, in <module>
+    from .DFG import DFG_python,DFG_java,DFG_ruby,DFG_go,DFG_php,DFG_javascript,DFG_csharp
+  File "/home/mahim/program_repair/CodeNet/evaluation/CodeBLEU/parser/DFG.py", line 4, in <module>
+    from tree_sitter import Language, Parser
+ModuleNotFoundError: No module named 'tree_sitter'
+Traceback (most recent call last):
+  File "/home/mahim/program_repair/CodeNet/evaluation/compile.py", line 7, in <module>
+    from tqdm import tqdm
+ModuleNotFoundError: No module named 'tqdm'
