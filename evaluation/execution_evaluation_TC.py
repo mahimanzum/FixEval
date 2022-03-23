@@ -7,10 +7,7 @@ from multiprocessing import Process, Lock
 from tqdm import tqdm
 import json
 from collections import defaultdict
-from codegen.preprocessing.lang_processors.java_processor import JavaProcessor
-from codegen.preprocessing.lang_processors.python_processor import PythonProcessor
 import subprocess
-import filecmp
 from subprocess import Popen, PIPE, STDOUT
 import sys
 import argparse
@@ -174,13 +171,7 @@ def main(args):
         for line in f:
             output_programs.append(line.strip())
 
-    root_folder = "../third_party"
-    jprocessor = JavaProcessor(root_folder=root_folder)
-    pyprocessor = PythonProcessor(root_folder=root_folder)
-    
-    processor = jprocessor if args.language == 'java' else pyprocessor
-    #print(processor)
-    problemlist=pd.read_csv("../Project_CodeNet/metadata/problem_list.csv")
+    problemlist=pd.read_csv("../problem_list.csv")
     problems = defaultdict(list)
     for index, row in tqdm(problemlist.iterrows()):
         if(row['dataset']=='AtCoder'):
@@ -195,6 +186,8 @@ def main(args):
                 problems["AGC"+number].append(row['id'])
     folders = glob(f"{args.test_cases}/*")
     #print(problems["ABC157"])
+    print(len(folders))
+    
     final_keys = []
     for idx in range(len(folders)):
         folders[idx] = folders[idx].replace(f"{args.test_cases}/", "")
@@ -220,12 +213,13 @@ def main(args):
                 #    print(folder_list)
                 problemid_to_tc[prob_id] = folder_list[idx]
     #print(problemid_to_tc['p02759'])
-    #print("len(problemid_to_tc) = ", len(problemid_to_tc))
+    print("len(problemid_to_tc) = ", len(problemid_to_tc))
     
     ran_prev, ran_now, total, data_count = 0, 0, 0, 0
     
     invalid_problems = ['p02833','p02764','p03619','p03429', 'p03334','p03110', 'p03836', 'p03394', 'p02678', 'p03046', 'p04035', 'p02669', 'p02977', 'p02997', 'p03938', 'p02692', 'p03267', 'p02975', 'p02825', 'p03952', 'p02731', 'p02936', 'p02902', 'p03263', 'p02972', 'p02690', 'p04007', 'p03257', 'p03095', 'p03746', 'p02903', 'p03097', 'p02963', 'p03245', 'p02976', 'p02694', 'p02697', 'p03044', 'p02861', 'p02850']
-    
+    if not os.path.exists("results/"):
+        os.makedirs("results/")
     def write_to_file(idx, content):
         with open(f"results/{idx}.txt", 'w+', encoding='utf8') as fw:
             fw.write(content)
@@ -242,39 +236,34 @@ def main(args):
             if dt['tgt_id'].split("_")[0] in invalid_problems:
                 print(" an invalid problem is in test which should not happen", dt['tgt_id'])
                 return
-                #continue
-            #print(dt['tgt_id'], problemid_to_tc[dt['tgt_id'].split("_")[0]])
+                
             test_case_folder = problemid_to_tc[dt['tgt_id'].split("_")[0]]
             if args.language=='java':
-                with lock:
-                    compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
-                #print("for tgt: ", compiles, correctTC, totalTC)
-                if(compiles and correctTC == totalTC):
-                    compiles, correctTC, totalTC = run_java(processor.detokenize_code(dt['src']),test_case_folder, idx)
+                compiles, correctTC_tgt, totalTC = run_java(dt['detokenized_tgt'],test_case_folder, idx)
+                if(compiles and correctTC_tgt == totalTC):
+                    _, correctTC_src, _ = run_java(dt['detokenized_src'],test_case_folder, idx)
+                    _, correctTC_out, _ = run_java(dt['detokenized_output'],test_case_folder, idx)
+                    
+                    if(correctTC_out>correctTC_src):
+                        write_to_file(idx, "Previous_code: \n"+
+                        dt['detokenized_src']+"\n ###############   "+"Output Code:\n"+
+                        dt['detokenized_output']+"\n##########   "+
+                        "Correct Code:\n"+dt['detokenized_tgt'])
                     with lock:
-                        ran_prev +=correctTC
-                        prev = ran_prev
-                        #print("for src: ", compiles, correctTC, totalTC)
-                        #print(idx, dt['src_id'] , dt['src_verdict'])
-                        compiles, correctTC, totalTC = run_java(processor.detokenize_code(output_programs[idx]),test_case_folder, idx)
-                        ran_now +=correctTC
-                        now = ran_now
+                        ran_prev +=correctTC_src
+                        ran_now +=correctTC_out
                         total+=totalTC
-                        data_count+=1
-                        print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
-                        if(now>prev):
-                            write_to_file(idx, "Previous_code: \n"+
-                            processor.detokenize_code(dt['src'])+"\n ###############\n"+"Output Code:\n"+
-                            processor.detokenize_code(output_programs[idx])+"\n##########\n"+
-                            "Correct Code:\n"+processor.detokenize_code(dt['tgt']))
-
+                        data_count+=1         
+                print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
+            
+            #needs change
             if args.language=='python':
-                compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['tgt']),test_case_folder, idx)
+                compiles, correctTC, totalTC = run_python(dt['detokenized_tgt'],test_case_folder, idx)
                 if(compiles and correctTC == totalTC):
-                    compiles, correctTC, totalTC = run_python(processor.detokenize_code(dt['src']),test_case_folder, idx)
+                    compiles, correctTC, totalTC = run_python(dt['detokenized_src'],test_case_folder, idx)
                     with lock:
                         ran_prev +=correctTC
-                    compiles, correctTC, totalTC = run_python(output_programs[idx],test_case_folder, idx)
+                    compiles, correctTC, totalTC = run_python(dt['detokenized_output'],test_case_folder, idx)
                     with lock:
                         ran_now +=correctTC
                         total+=totalTC
@@ -285,7 +274,15 @@ def main(args):
     #for idx, dt in enumerate(data[:200]):
     #    execute_and_evaluate(idx, dt)
 
-    Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data)) #, prefer="threads"
+    import psutil
+    current_process = psutil.Process()
+    subproc_before = set([p.pid for p in current_process.children(recursive=True)])
+    grouped_data = Parallel(n_jobs=5,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data[:50])) #, prefer="threads"
+    subproc_after = set([p.pid for p in current_process.children(recursive=True)])
+    for subproc in subproc_after - subproc_before:
+        print('Killing process with pid {}'.format(subproc))
+        psutil.Process(subproc).terminate()
+    
         
     
     print("ran_prev,ran_now, total, data_count, ran_prev/total, ran_now/total ", ran_prev,ran_now, total,data_count,ran_prev/total,ran_now/total )
@@ -294,10 +291,20 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--references', help="filename of the labels, in jsonl format.")
-    parser.add_argument('--predictions', help="filename of the leaderboard predictions, in txt format.")
+    #parser.add_argument('--predictions', help="filename of the leaderboard predictions, in txt format.")
     
     parser.add_argument("--language", type=str, required=True, help="Name of language")
-    parser.add_argument("--test_cases", type=str, required=True, help="Name of language")
+    #parser.add_argument("--test_cases", type=str, required=True, help="Name of language")
     
     params = parser.parse_args()
     main(params)        
+    '''
+    python execution_evaluation_TC.py --references ../test.jsonl --predictions ../test.output --language java --test_cases ../atcoder_test_cases
+
+    #pandas , matplotlib, sacrebleu , needs to be installed
+
+    pip install pandas
+    pip install matplotlib
+    pip install sacrebleu=="1.4.5" mecab-python3==0.996.5 unidic-lite tree-sitter javalang
+    
+    '''
