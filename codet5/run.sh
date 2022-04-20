@@ -19,17 +19,20 @@ export CUDA_VISIBLE_DEVICES=$GPU
 echo "Source: $SOURCE Target: $TARGET"
 
 if [[ $DATA_SRC == 'codenet' ]]; then
-    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;#with_verdict
+    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed_with_verdict;#with_verdict
 elif [[ $DATA_SRC == 'g4g' ]]; then
     path_2_data=${CODE_DIR_HOME}/data/g4g_functions;
 fi
 
-SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};#with_verdict
+SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#with_verdict
 CACHE_DIR=${SAVE_DIR}/cached_data
 mkdir -p $SAVE_DIR
 mkdir -p $CACHE_DIR
 
-pretrained_model=${CODE_DIR_HOME}/models/codet5_base;
+#pretrained_model=${CODE_DIR_HOME}/models/codet5_base;
+
+pretrained_model=${SAVE_DIR}/checkpoint-best-ppl;
+
 tokenizer_path=${CURRENT_DIR}/bpe;
 source_length=510;
 target_length=510;
@@ -37,7 +40,7 @@ target_length=510;
 
 function train () {
 
-NUM_TRAIN_EPOCHS=20;
+NUM_TRAIN_EPOCHS=20; #20
 lr=5e-5;
 TRAIN_BATCH_SIZE=2; # per_gpu_train_bsz * num_gpu 
 GRAD_ACCUM_STEP=16; # effective_bsz = train_bsz * grad_accum_steps
@@ -134,5 +137,5 @@ com
 
 
 # remove cached data
-train;
+#train;
 evaluate;

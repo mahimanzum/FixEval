@@ -39,6 +39,14 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
 Need to download the data folder in the parent directory
 Download the atcoder test cases folder in the src or evaluation directory and change the code. (Change needed in split.py and execution_evaluation_TC.py)
 
+## download all the test cases of atcoder 
+```
+wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1AInTHzaZqym7WsT1B7yc8nZy7dA3ovPf' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1AInTHzaZqym7WsT1B7yc8nZy7dA3ovPf" -O atcoder_test_cases.zip && rm -rf /tmp/cookies.txt
+```
+move this zip file to the data folder and extract there (unzip atcoder_test_cases.zip)
+
+
+
 # Environment creation  information
 ```
 conda env create -n python -f src/environment.yml
