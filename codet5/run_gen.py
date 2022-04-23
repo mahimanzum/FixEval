@@ -31,6 +31,7 @@ import time
 import sys
 import pdb
 import sys
+import json
 sys.path.append("..")
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
@@ -93,10 +94,12 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
     logger.info("  Batch size = %d", args.eval_batch_size)
     eval_sampler = SequentialSampler(eval_data)
     if args.data_num == -1:
+        #logger.info("################################################### comes_96")
         eval_dataloader = DataLoader(
             eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size, num_workers=4, pin_memory=True
         )
     else:
+        
         eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
     model.eval()
@@ -110,6 +113,7 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
                 preds = model(source_ids=source_ids, source_mask=source_mask)
                 top_preds = [pred[0].cpu().numpy() for pred in preds]
             else:
+                #logger.info("###################################### comes 114")
                 preds = model.generate(source_ids,
                                        attention_mask=source_mask,
                                        use_cache=True,
@@ -412,6 +416,95 @@ def main():
                     with open(args.res_fn, 'a+') as f:
                         f.write('[Time: {}] {}\n'.format(get_elapse_time(t0), file))
                         f.write(result_str)
+    if args.do_generate:
+        logger.info("  " + "***** Just generating *****")
+        logger.info("  Batch size = %d", args.eval_batch_size)
+
+        file = os.path.join(args.output_dir, 'checkpoint-best-ppl/pytorch_model.bin')
+        if os.path.isfile(file):
+            logger.info("Reload model from {}".format(file))
+            model.load_state_dict(torch.load(file))
+            eval_examples, eval_data = load_and_cache_gen_data(
+                args, args.test_filename, pool, tokenizer, 'test', only_src=True, is_sample=False
+            )
+            
+        
+            logger.info("  Num examples = %d", len(eval_examples))
+            logger.info("  Batch size = %d", args.eval_batch_size)
+            eval_sampler = SequentialSampler(eval_data)
+            if args.data_num == -1:
+                eval_dataloader = DataLoader(
+                    eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size, num_workers=4, pin_memory=True
+                )
+            else:
+                eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
+
+            model.eval()
+            pred_ids = []
+            for batch in tqdm(eval_dataloader, total=len(eval_dataloader), desc="Generating Data:"):
+                
+                source_ids = batch[0].to(args.device)
+                source_mask = source_ids.ne(tokenizer.pad_token_id)
+                #print(len(batch))
+                #print(source_ids.shape)
+                with torch.no_grad():
+                    
+                    preds = model.generate(source_ids,
+                                        attention_mask=source_mask,
+                                        use_cache=True,
+                                        num_beams=args.beam_size,
+                                        num_return_sequences=args.beam_size,
+                                        top_p=0.95,
+                                        top_k=50,#do_sample=True,
+                                        temperature=0.7,
+                                        early_stopping=args.task == 'summarize',
+                                        max_length=args.max_target_length)
+                    '''
+                    preds = model.generate(source_ids,
+                                        attention_mask=source_mask,
+                                        use_cache=True,
+                                        num_beams=args.beam_size,
+                                        early_stopping=args.task == 'summarize',
+                                        max_length=args.max_target_length)
+                    '''
+                    top_preds = list(preds.cpu().numpy())
+                    #print(len(top_preds))
+                    #print(top_preds)
+                    pred_ids.extend(top_preds)
+                    #break # for debugging
+            # pdb.set_trace()
+            pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
+
+            output_fn = os.path.join(args.res_dir, "generation.output")
+            gold_fn = os.path.join(args.res_dir, "generation.gold")
+            src_fn = os.path.join(args.res_dir, "generation.src")
+
+            def write_json(data, path):
+                a_file = open(path, "w")
+                json.dump(data, a_file)
+                a_file.close()
+            
+            print(len(pred_nls))
+            generated = []
+            for idx, gold in enumerate(eval_examples):
+                data = {}
+                data[idx] = idx
+                data['target'] = gold.target.strip()
+                data['source'] = gold.source.strip()
+                data['generations'] = pred_nls[args.beam_size*idx:args.beam_size*(idx+1)]
+                generated.append(data)
+
+            write_json(generated, os.path.join(args.res_dir,'generation.json'))
+            
+            '''
+            with open(output_fn, 'w', encoding='utf8') as f, \
+                open(gold_fn, 'w', encoding='utf8') as f1, \
+                open(src_fn, 'w', encoding='utf8') as f2:
+                for pred_nl, gold in zip(pred_nls, eval_examples):
+                    f.write(pred_nl.strip() + '\n')
+                    f1.write(gold.target.strip() + '\n')
+                    f2.write(gold.source.strip() + '\n')
+            '''
     logger.info("Finish and take {}".format(get_elapse_time(t0)))
     fa.write("Finish and take {}".format(get_elapse_time(t0)))
     fa.close()

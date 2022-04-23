@@ -11,20 +11,20 @@ codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
 TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
-SOURCE=${2:-python};
-TARGET=${3:-python};
+SOURCE=${2:-java};
+TARGET=${3:-java};
 DATA_SRC=${4:-codenet};
 
 export CUDA_VISIBLE_DEVICES=$GPU
 echo "Source: $SOURCE Target: $TARGET"
 
 if [[ $DATA_SRC == 'codenet' ]]; then
-    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed_with_verdict;#with_verdict
+    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;#with_verdict
 elif [[ $DATA_SRC == 'g4g' ]]; then
     path_2_data=${CODE_DIR_HOME}/data/g4g_functions;
 fi
 
-SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#with_verdict
+SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};#with_verdict
 CACHE_DIR=${SAVE_DIR}/cached_data
 mkdir -p $SAVE_DIR
 mkdir -p $CACHE_DIR
@@ -134,8 +134,31 @@ python $evaluator_script/execution_evaluation_TC.py \
 com
 }
 
+function generate () {
+
+MODEL_PATH=${SAVE_DIR}/checkpoint-best-ppl/pytorch_model.bin;
+python run_gen.py \
+    --do_generate \
+    --model_type codet5 \
+    --tokenizer_name roberta-base \
+    --tokenizer_path $tokenizer_path \
+    --model_name_or_path $pretrained_model \
+    --task translate \
+    --sub_task "${SOURCE}-${TARGET}" \
+    --output_dir $SAVE_DIR \
+    --data_dir $path_2_data \
+    --cache_path $CACHE_DIR \
+    --res_dir $SAVE_DIR \
+    --eval_batch_size 5 \
+    --max_source_length $source_length \
+    --max_target_length $target_length \
+    --beam_size 3 \
+    --data_num 10 \
+    2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
+}
 
 
 # remove cached data
 #train;
-evaluate;
+#evaluate;
+generate;
