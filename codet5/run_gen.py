@@ -475,36 +475,27 @@ def main():
             # pdb.set_trace()
             pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
 
-            output_fn = os.path.join(args.res_dir, "generation.output")
-            gold_fn = os.path.join(args.res_dir, "generation.gold")
-            src_fn = os.path.join(args.res_dir, "generation.src")
 
             def write_json(data, path):
                 a_file = open(path, "w")
                 json.dump(data, a_file)
                 a_file.close()
-            
-            print(len(pred_nls))
+
+            id_file = os.path.join(args.data_dir,'test.'+args.sub_task+'.id')
+            ids = open(id_file).read().strip().split("\n")
             generated = []
             for idx, gold in enumerate(eval_examples):
                 data = {}
                 data[idx] = idx
                 data['target'] = gold.target.strip()
+                data['problem_submission_id'] = ids[idx]
                 data['source'] = gold.source.strip()
                 data['generations'] = pred_nls[args.beam_size*idx:args.beam_size*(idx+1)]
                 generated.append(data)
 
             write_json(generated, os.path.join(args.res_dir,'generation.json'))
             
-            '''
-            with open(output_fn, 'w', encoding='utf8') as f, \
-                open(gold_fn, 'w', encoding='utf8') as f1, \
-                open(src_fn, 'w', encoding='utf8') as f2:
-                for pred_nl, gold in zip(pred_nls, eval_examples):
-                    f.write(pred_nl.strip() + '\n')
-                    f1.write(gold.target.strip() + '\n')
-                    f2.write(gold.source.strip() + '\n')
-            '''
+            
     logger.info("Finish and take {}".format(get_elapse_time(t0)))
     fa.write("Finish and take {}".format(get_elapse_time(t0)))
     fa.close()
