@@ -149,11 +149,11 @@ python run_gen.py \
     --data_dir $path_2_data \
     --cache_path $CACHE_DIR \
     --res_dir $SAVE_DIR \
-    --eval_batch_size 5 \
+    --eval_batch_size 4 \
     --max_source_length $source_length \
     --max_target_length $target_length \
-    --beam_size 3 \
-    --data_num 10 \
+    --beam_size 10 \
+    --data_num -1 \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
 

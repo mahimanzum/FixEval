@@ -486,10 +486,10 @@ def main():
             generated = []
             for idx, gold in enumerate(eval_examples):
                 data = {}
-                data[idx] = idx
-                data['target'] = gold.target.strip()
-                data['problem_submission_id'] = ids[idx]
-                data['source'] = gold.source.strip()
+                data['idx'] = idx
+                data['tgt'] = gold.target.strip()
+                data['tgt_id'] = ids[idx]
+                data['src'] = gold.source.strip()
                 data['generations'] = pred_nls[args.beam_size*idx:args.beam_size*(idx+1)]
                 generated.append(data)
 

@@ -281,7 +281,7 @@ def main(args):
                         ran_now +=correctTC
                         total+=totalTC
         else:
-            print(dt['src_id'])
+            print(dt['tgt_id'])
             print("a problem found for which we have no test case which should not happen")
             return
     ''''
