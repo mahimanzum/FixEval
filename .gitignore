@@ -11,14 +11,20 @@
 
 data/
 Project_CodeNet/
-codet5/tensorboard/
+
 src/atcoder_test_cases/
 src/codejam
 wget-log
+
 codet5/garbage/
 codet5/codenet/
+codet5/tensorboard/
+
 plbart/codenet/
 plbart/garbage/
+plbart/tensorboard
+
+
 __pycache__/
 *.py[cod]
 *$py.class

@@ -55,7 +55,6 @@ python run_gen.py \
     --model_type codet5 \
     --tokenizer_name roberta-base \
     --tokenizer_path $tokenizer_path \
-    --model_name_or_path $pretrained_model \
     --output_dir $SAVE_DIR \
     --num_train_epochs $NUM_TRAIN_EPOCHS \
     --warmup_steps 100 \
@@ -70,7 +69,7 @@ python run_gen.py \
     --max_source_length $source_length \
     --max_target_length $target_length \
     --beam_size 5 \
-    --data_num 100 \
+    --data_num -1 \
     2>&1 | tee ${SAVE_DIR}/training.log;
 
 }
@@ -99,7 +98,7 @@ python run_gen.py \
     --max_source_length $source_length \
     --max_target_length $target_length \
     --beam_size 5 \
-    --data_num 100 \
+    --data_num -1 \
     2>&1 | tee ${SAVE_DIR}/evaluation.log;
 
 echo "Evaluating Bleu" 

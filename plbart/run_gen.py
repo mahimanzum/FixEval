@@ -37,8 +37,8 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 
-from codet5.utils import get_filenames, get_elapse_time, load_and_cache_gen_data
-from codet5.configs import add_args, set_seed, set_dist
+from plbart.utils import get_filenames, get_elapse_time, load_and_cache_gen_data
+from plbart.configs import add_args, set_seed, set_dist
 from transformers import AdamW, get_linear_schedule_with_warmup
 from evaluation import smooth_bleu
 from evaluation.bleu import _bleu
@@ -191,8 +191,9 @@ def main():
 
     set_dist(args)
     set_seed(args)
-
     model = PLBartForConditionalGeneration.from_pretrained("uclanlp/plbart-base")
+    if len(args.model_name_or_path):
+        model = PLBartForConditionalGeneration.from_pretrained(args.model_name_or_path)
     tokenizer = PLBartTokenizer.from_pretrained("uclanlp/plbart-base")
     config = PLBartConfig.from_pretrained("uclanlp/plbart-base")
     

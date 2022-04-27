@@ -55,7 +55,6 @@ python run_gen.py \
     --model_type codet5 \
     --tokenizer_name roberta-base \
     --tokenizer_path $tokenizer_path \
-    --model_name_or_path $pretrained_model \
     --output_dir $SAVE_DIR \
     --num_train_epochs $NUM_TRAIN_EPOCHS \
     --warmup_steps 100 \
