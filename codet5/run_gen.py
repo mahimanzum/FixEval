@@ -424,8 +424,9 @@ def main():
         if os.path.isfile(file):
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))
+            #print("args.test_filename = ", args.test_filename)
             eval_examples, eval_data = load_and_cache_gen_data(
-                args, args.test_filename, pool, tokenizer, 'test', only_src=True, is_sample=False
+                args, '/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/src_eval.python-python.python,/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/tgt_eval.python-python.python', pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
             
         
@@ -481,7 +482,7 @@ def main():
                 json.dump(data, a_file)
                 a_file.close()
 
-            id_file = os.path.join(args.data_dir,'test.'+args.sub_task+'.id')
+            id_file = os.path.join(args.data_dir,'eval.'+args.sub_task+'.id')
             ids = open(id_file).read().strip().split("\n")
             generated = []
             for idx, gold in enumerate(eval_examples):
