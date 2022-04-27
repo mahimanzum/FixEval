@@ -42,8 +42,8 @@ function train () {
 
 NUM_TRAIN_EPOCHS=20; #20
 lr=5e-5;
-TRAIN_BATCH_SIZE=2; # per_gpu_train_bsz * num_gpu 
-GRAD_ACCUM_STEP=16; # effective_bsz = train_bsz * grad_accum_steps
+TRAIN_BATCH_SIZE=4; # per_gpu_train_bsz * num_gpu 
+GRAD_ACCUM_STEP=8; # effective_bsz = train_bsz * grad_accum_steps
 
 python run_gen.py \
     --do_train \
