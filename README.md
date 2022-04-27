@@ -48,7 +48,14 @@ move this zip file to the data folder and extract there (unzip atcoder_test_case
 
 
 # Environment creation  information
+Best way is 
 ```
+bash install_env.sh
+```
+
+Another way will be : 
+```
+
 conda env create -n python -f src/environment.yml
 conda activate python36
 ```

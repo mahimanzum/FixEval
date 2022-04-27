@@ -1,68 +1,92 @@
 import java . util . * ;
+import java . io . * ;
+import static java . lang . Math . * ;
 public class Main {
-  static Scanner sc = new Scanner ( System . in ) ;
-  static void myout ( Object text ) {
-    System . out . println ( text ) ;
-  }
-  static String getStr ( ) {
-    return sc . next ( ) ;
-  }
-  static int getInt ( ) {
-    return sc . nextInt ( ) ;
-  }
-  static Long getLong ( ) {
-    return sc . nextLong ( ) ;
-  }
-  static boolean isNext ( ) {
-    return sc . hasNext ( ) ;
-  }
-  public static void main ( String [ ] args ) {
-    int N = getInt ( ) ;
-    int output = 0 ;
-    ArrayList < Integer > aList = new ArrayList < Integer > ( N ) ;
-    ArrayList < Integer > bList = new ArrayList < Integer > ( N ) ;
+  public static void main ( String [ ] args ) throws Exception {
+    Scanner sc = new Scanner ( System . in ) ;
+    int n = sc . nextInt ( ) ;
+    String [ ] s = new String [ n ] ;
     for ( int i = 0 ;
-    i < N ;
+    i < n ;
     i ++ ) {
-      aList . add ( getInt ( ) ) ;
+      s [ i ] = sc . next ( ) ;
     }
+    String result = "Yes" ;
+    ArrayList < int [ ] > up = new ArrayList < int [ ] > ( ) ;
+    ArrayList < int [ ] > down = new ArrayList < int [ ] > ( ) ;
+    int total = 0 ;
     for ( int i = 0 ;
-    i < N ;
+    i < n ;
     i ++ ) {
-      bList . add ( getInt ( ) ) ;
-    }
-    PriorityQueue < Integer > pq = new PriorityQueue < Integer > ( Comparator . reverseOrder ( ) ) ;
-    for ( int i = 0 ;
-    i < N ;
-    i ++ ) {
-      pq . add ( bList . get ( i ) ) ;
-    }
-    while ( pq . size ( ) != 0 ) {
-      int max = pq . poll ( ) ;
-      int index = bList . indexOf ( max ) ;
-      int mae = index - 1 ;
-      if ( mae == - 1 ) {
-        mae = N - 1 ;
+      int cnt = 0 ;
+      int minus = 0 ;
+      for ( int j = 0 ;
+      j < s [ i ] . length ( ) ;
+      j ++ ) {
+        if ( s [ i ] . charAt ( j ) == '(' ) cnt ++ ;
+        if ( s [ i ] . charAt ( j ) == ')' ) cnt -- ;
+        minus = min ( minus , cnt ) ;
       }
-      int ato = index + 1 ;
-      if ( ato == N ) {
-        ato = 0 ;
+      if ( cnt >= 0 ) {
+        up . add ( new int [ ] {
+          i , minus , cnt }
+          ) ;
+        }
+        else {
+          down . add ( new int [ ] {
+            i , minus - cnt , - cnt }
+            ) ;
+          }
+          total += cnt ;
+        }
+        if ( total != 0 ) result = "No" ;
+        int cnt = 0 ;
+        for ( int [ ] u : up ) {
+          if ( cnt + u [ 1 ] < 0 ) {
+            result = "No" ;
+            break ;
+          }
+          else {
+            cnt += u [ 2 ] ;
+          }
+        }
+        cnt = 0 ;
+        for ( int [ ] d : down ) {
+          if ( cnt + d [ 1 ] < 0 ) {
+            result = "No" ;
+            break ;
+          }
+          else {
+            cnt += d [ 2 ] ;
+          }
+        }
+        System . out . println ( result ) ;
       }
-      int bMae = bList . get ( mae ) ;
-      int bAto = bList . get ( ato ) ;
-      if ( max - ( bMae + bAto ) < 1 ) {
-        output = - 1 ;
-        break ;
-      }
-      else {
-        output += Math . floor ( max / ( bMae + bAto ) ) ;
-        max = max % ( bMae + bAto ) ;
-        bList . set ( index , max ) ;
-        if ( max != aList . get ( index ) ) {
-          pq . add ( max ) ;
+      public static class Scanner {
+        private BufferedReader br ;
+        private StringTokenizer tok ;
+        public Scanner ( InputStream is ) throws IOException {
+          br = new BufferedReader ( new InputStreamReader ( is ) ) ;
+        }
+        private void getLine ( ) throws IOException {
+          while ( ! hasNext ( ) ) tok = new StringTokenizer ( br . readLine ( ) ) ;
+        }
+        private boolean hasNext ( ) {
+          return tok != null && tok . hasMoreTokens ( ) ;
+        }
+        public String next ( ) throws IOException {
+          getLine ( ) ;
+          return tok . nextToken ( ) ;
+        }
+        public int nextInt ( ) throws IOException {
+          return Integer . parseInt ( next ( ) ) ;
+        }
+        public long nextLong ( ) throws IOException {
+          return Long . parseLong ( next ( ) ) ;
+        }
+        public double nextDouble ( ) throws IOException {
+          return Double . parseDouble ( next ( ) ) ;
         }
       }
     }
-    myout ( output ) ;
-  }
-}
+    

@@ -1,4 +1,4 @@
-conda create --name temp
+conda create --name codenet
 conda activate temp
 conda config --add channels conda-forge
 conda config --add channels pytorch
