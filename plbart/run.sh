@@ -11,8 +11,8 @@ codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
 TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
-SOURCE=${2:-python};
-TARGET=${3:-python};
+SOURCE=${2:-java};
+TARGET=${3:-java};
 DATA_SRC=${4:-codenet};
 
 export CUDA_VISIBLE_DEVICES=$GPU
@@ -70,6 +70,7 @@ python run_gen.py \
     --max_source_length $source_length \
     --max_target_length $target_length \
     --beam_size 5 \
+    --data_num 100 \
     2>&1 | tee ${SAVE_DIR}/training.log;
 
 }
@@ -98,6 +99,7 @@ python run_gen.py \
     --max_source_length $source_length \
     --max_target_length $target_length \
     --beam_size 5 \
+    --data_num 100 \
     2>&1 | tee ${SAVE_DIR}/evaluation.log;
 
 echo "Evaluating Bleu" 
@@ -156,13 +158,7 @@ python run_gen.py \
     --data_num -1 \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
-GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
-cd $CURRENT_DIR;
-python $evaluator_script/compile.py \
-    --input_file $SAVE_DIR/test.src \
-    --language $TARGET;
 
-# remove cached data
-#train;
-#evaluate;
+train;
+evaluate;
 #generate;

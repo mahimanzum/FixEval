@@ -34,7 +34,7 @@ def main():
         #refs = [x['tgt'].strip() for x in data]
         for line in tqdm(data):
             #print(line['tgt'])
-            refs = [line['tgt']] # change here for tokenization detokenization
+            refs = [line['src']] # change here for tokenization detokenization
             if args.detokenize_refs:
                 if args.language == 'python':
                     #refs = [pyprocessor.detokenize_code(r) for r in refs]

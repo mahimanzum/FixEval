@@ -16,9 +16,9 @@ src/atcoder_test_cases/
 src/codejam
 wget-log
 codet5/garbage/
-codet5/codenet/python2python/*
-codet5/codenet/python2python_with_verdict/*
-
+codet5/codenet/
+plbart/codenet/
+plbart/garbage/
 __pycache__/
 *.py[cod]
 *$py.class
