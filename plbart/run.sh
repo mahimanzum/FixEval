@@ -158,6 +158,6 @@ python run_gen.py \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
 
-train;
+#train;
 evaluate;
 #generate;

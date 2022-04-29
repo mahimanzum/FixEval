@@ -192,11 +192,14 @@ def main():
     set_dist(args)
     set_seed(args)
     model = PLBartForConditionalGeneration.from_pretrained("uclanlp/plbart-base")
-    if len(args.model_name_or_path):
-        model = PLBartForConditionalGeneration.from_pretrained(args.model_name_or_path)
     tokenizer = PLBartTokenizer.from_pretrained("uclanlp/plbart-base")
     config = PLBartConfig.from_pretrained("uclanlp/plbart-base")
     
+    if len(args.model_name_or_path):
+        logger.info("### Reload model from {}".format(args.model_name_or_path))
+        file = os.path.join(args.model_name_or_path, 'pytorch_model.bin')
+        model = PLBartForConditionalGeneration.from_pretrained(file, config = config)
+    #model.config = config
     model.to(args.device)
     if args.n_gpu > 1:
         # for DataParallel
@@ -401,11 +404,12 @@ def main():
         logger.info("  " + "***** Testing *****")
         logger.info("  Batch size = %d", args.eval_batch_size)
 
-        for criteria in ['best-bleu', 'best-ppl']:  # 'best-bleu', 'best-ppl', 'last'
-            file = os.path.join(args.output_dir, 'checkpoint-{}/pytorch_model.bin'.format(criteria))
+        for criteria in ['best-ppl']:  # 'best-bleu', 'best-ppl', 'last'
+            file = os.path.join(args.model_name_or_path, 'pytorch_model.bin')
             if os.path.isfile(file):
                 logger.info("Reload model from {}".format(file))
                 model.load_state_dict(torch.load(file))
+
                 eval_examples, eval_data = load_and_cache_gen_data(
                     args, args.test_filename, pool, tokenizer, 'test', only_src=True, is_sample=False
                 )
