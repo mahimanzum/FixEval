@@ -156,11 +156,10 @@ python run_gen.py \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
 GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
-cd $CURRENT_DIR;
-python $evaluator_script/compile.py \
-    --input_file $SAVE_DIR/test.src \
+python $evaluator_script/evaluator.py \
+    --references $GOUND_TRUTH_PATH \
+    --predictions $SAVE_DIR/test.src \
     --language $TARGET;
-
 # remove cached data
 #train;
 #evaluate;

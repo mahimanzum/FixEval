@@ -16,6 +16,8 @@ from joblib import Parallel, delayed
 from subprocess import TimeoutExpired
 import threading
 import psutil
+import resource
+
 def getJsonData(JsonFile):
     with open(JsonFile, encoding="utf8") as f:
         data = json.load(f)
@@ -75,12 +77,17 @@ def kill(proc_pid):
     if psutil.pid_exists(proc_pid):
         process = psutil.Process(proc_pid)
         for proc in process.children(recursive=True):
-            proc.kill()
+            if psutil.pid_exists(proc.pid):
+                proc.kill()
         process.kill()
 
 
+MAX_VIRTUAL_MEMORY =4* 1024 * 1024 * 1024 # 4*1024 MB
+def limit_virtual_memory():
+    resource.setrlimit(resource.RLIMIT_AS, (MAX_VIRTUAL_MEMORY, resource.RLIM_INFINITY))
+
 def run_python(code, test_case_folder, idx):
-    root_path = f'garbage/{idx}'
+    root_path = f'garbage_py/{idx}'
     isExist = os.path.exists(root_path)
     if not isExist:
         os.makedirs(root_path)
@@ -108,13 +115,15 @@ def run_python(code, test_case_folder, idx):
         cmd = f"python {root_path}/Main.py < {root_path}/stripped_TC.txt > {root_path}/cmd_out.txt"
         if (python2):
             cmd = cmd.replace("python", "python2")
-        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=subprocess.DEVNULL, close_fds=True)
+        p = Popen(cmd, preexec_fn=limit_virtual_memory, shell=True, stdin=PIPE, stdout=PIPE, stderr=subprocess.DEVNULL, close_fds=True)
 
         # for Time limit exceeded cases
         try:
-            outs, errs = p.communicate(timeout=5)
+            outs, errs = p.communicate(timeout=15)
         except TimeoutExpired:
-            p.kill()
+            kill(p.pid)
+            did_not_match+=1
+            continue
         
         out_file = in_file.replace("in", "out", 1).replace(".in", ".out", 1)
 
@@ -175,7 +184,7 @@ def run_java(code, test_case_folder, idx):
 
     subprocess.run(["rm","-rf",f"{root_path}"])
     return True, len(in_files)-did_not_match,len(in_files)
-
+FINAL_RESULT = []
 def main(args):
 
     data = getJsonData(args.references)
@@ -243,6 +252,7 @@ def main(args):
         nonlocal data_count
         nonlocal invalid_problems
         #print("processing index: ", idx)
+        one_example = dt.copy()
         if dt['tgt_id'].split("_")[0] in problemid_to_tc.keys():
             if dt['tgt_id'].split("_")[0] in invalid_problems:
                 print(" an invalid problem is in test which should not happen", dt['tgt_id'])
@@ -251,53 +261,80 @@ def main(args):
             test_case_folder = problemid_to_tc[dt['tgt_id'].split("_")[0]]
             if args.language=='java':
                 compiles, correctTC_tgt, totalTC = run_java(dt['detokenized_tgt'],test_case_folder, idx)
+                one_example['total_test_cases'] = totalTC
                 if(compiles and correctTC_tgt == totalTC):
                     _, correctTC_src, _ = run_java(dt['detokenized_src'],test_case_folder, idx)
-                    _, correctTC_out, _ = run_java(dt['detokenized_output'],test_case_folder, idx)
+                    one_example['test_cases_run_by_src'] = correctTC_src
+                    one_example['test_cases_run_by_generations'] = []
+                    for generation in dt['detokenized_generations']:
+                        _, correctTC_out, _ = run_java(generation,test_case_folder, idx)
+                        one_example['test_cases_run_by_generations'].append(correctTC_out)
                     
-                    if(correctTC_out>correctTC_src):
-                        write_to_file(idx, "Previous_code: \n"+
-                        dt['detokenized_src']+"\n ###############   "+"Output Code:\n"+
-                        dt['detokenized_output']+"\n##########   "+
-                        "Correct Code:\n"+dt['detokenized_tgt'])
+                    #if(correctTC_out>correctTC_src):
+                    #    write_to_file(idx, "Previous_code: \n"+
+                    #    dt['detokenized_src']+"\n ###############   "+"Output Code:\n"+
+                    #    dt['detokenized_output']+"\n##########   "+
+                    #    "Correct Code:\n"+dt['detokenized_tgt'])
                     with lock:
                         ran_prev +=correctTC_src
                         ran_now +=correctTC_out
                         total+=totalTC
                         data_count+=1 
-                with open('output.txt', 'a') as f:
-                    f.write(f'ran prev, ran now, total, idx = {ran_prev}, {ran_now}, {total}, {idx}\n')        
+                        FINAL_RESULT.append(one_example)
+                        with open('output.txt', 'a+') as f:
+                            f.write(f'ran prev, ran now, total, idx = {ran_prev}, {ran_now}, {total}, {idx}\n')        
                 print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
             
             #needs change
             if args.language=='python':
-                compiles, correctTC, totalTC = run_python(dt['detokenized_tgt'],test_case_folder, idx)
-                if(compiles and correctTC == totalTC):
-                    compiles, correctTC, totalTC = run_python(dt['detokenized_src'],test_case_folder, idx)
+                compiles, correctTC_tgt, totalTC = run_python(dt['detokenized_tgt'],test_case_folder, idx)
+                one_example['total_test_cases'] = totalTC
+                #print(compiles, correctTC_tgt, totalTC)
+                
+                if(compiles and correctTC_tgt == totalTC):
+                    _, correctTC_src, _ = run_python(dt['detokenized_src'],test_case_folder, idx)
+                    #print(correctTC_src,correctTC_tgt)
+                    one_example['test_cases_run_by_src'] = correctTC_src
+                    one_example['test_cases_run_by_generations'] = []
+                    #pprint(one_example)
+                    
+                    for generation in dt['detokenized_generations']:
+                        _, correctTC_out, _ = run_python(generation,test_case_folder, idx)
+                        one_example['test_cases_run_by_generations'].append(correctTC_out)
+                    
+                    #if(correctTC_out>correctTC_src):
+                    #    write_to_file(idx, "Previous_code: \n"+
+                    #    dt['detokenized_src']+"\n ###############   "+"Output Code:\n"+
+                    #    dt['detokenized_output']+"\n##########   "+
+                    #    "Correct Code:\n"+dt['detokenized_tgt'])
                     with lock:
-                        ran_prev +=correctTC
-                    compiles, correctTC, totalTC = run_python(dt['detokenized_output'],test_case_folder, idx)
-                    with lock:
-                        ran_now +=correctTC
+                        ran_prev +=correctTC_src
+                        ran_now +=correctTC_out
                         total+=totalTC
+                        data_count+=1 
+                        FINAL_RESULT.append(one_example)
+                with open('output_py.txt', 'a') as f:
+                    f.write(f'ran prev, ran now, total, idx, len = {ran_prev}, {ran_now}, {total}, {idx}, {len(FINAL_RESULT)}\n')        
+                print("ran_prev,ran_now, total, data_count ", ran_prev,ran_now, total, data_count)
         else:
-            print(dt['tgt_id'])
+            print(dt['src_id'])
             print("a problem found for which we have no test case which should not happen")
             return
-    ''''
-    for idx, dt in enumerate(data[50:100]):
-        execute_and_evaluate(idx, dt)
+    '''
+    for idx in range(0, len(data)):
+        execute_and_evaluate(idx, data[idx])
     '''
     import psutil
     current_process = psutil.Process()
     subproc_before = set([p.pid for p in current_process.children(recursive=True)])
-    grouped_data = Parallel(n_jobs=8,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data[9020:])) #, prefer="threads"
+    grouped_data = Parallel(n_jobs=4,prefer="threads")(delayed(execute_and_evaluate)(idx, dt) for idx, dt in enumerate(data)) #, prefer="threads"
     subproc_after = set([p.pid for p in current_process.children(recursive=True)])
     for subproc in subproc_after - subproc_before:
         print('Killing process with pid {}'.format(subproc))
         psutil.Process(subproc).terminate()
     
-       
+    with open('FINAL_RESULT_python2python_with_verdict.json', 'w', encoding='utf8') as fw:
+        json.dump(FINAL_RESULT, fw)   
     
     print("ran_prev,ran_now, total, data_count, ran_prev/total, ran_now/total ", ran_prev,ran_now, total,data_count,ran_prev/total,ran_now/total )
             

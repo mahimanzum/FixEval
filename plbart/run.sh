@@ -11,8 +11,8 @@ codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
 TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
-SOURCE=${2:-java};
-TARGET=${3:-java};
+SOURCE=${2:-python};
+TARGET=${3:-python};
 DATA_SRC=${4:-codenet};
 
 export CUDA_VISIBLE_DEVICES=$GPU
@@ -158,6 +158,6 @@ python run_gen.py \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
 
-#train;
+train;
 evaluate;
 #generate;

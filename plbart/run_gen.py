@@ -435,7 +435,7 @@ def main():
             model.load_state_dict(torch.load(file))
             #print("args.test_filename = ", args.test_filename)
             eval_examples, eval_data = load_and_cache_gen_data(
-                args, '/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/src_eval.python-python.python,/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/tgt_eval.python-python.python', pool, tokenizer, 'eval', only_src=True, is_sample=False
+                args, '/home/mahim/program_repair/CodeNet/data/java/processed/src_eval.java-java.java,/home/mahim/program_repair/CodeNet/data/java/processed/tgt_eval.java-java.java', pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
             
         
