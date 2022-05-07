@@ -1,20 +1,27 @@
-readme added new
-
 # Download project Codenet
-## Whole dataset
+Run this command to download the whole codenet dataset(Around 8GB zipped file) in the main directory and Unzip it.
+```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet.tar.gz?_ga=2.133483278.1486692882.1645896851-1137262026.1645896851
-
+```
 ## Codenet Metadata
+Run this command to download codenet Metadata (281Mb zip file) in the main directory and Unzip it
+```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet_metadata.tar.gz?_ga=2.191718442.1486692882.1645896851-1137262026.1645896851
-
-# folder structure (Need to edit)
+```
+# Folder Structure 
 ```
 ├── README.md 
 ├── third_party 
 ├── codet5
 │   ├── run.sh 
 │   ├── configs.py
-│   └── models.py
+│   ├── models.py
+│   └── run_gen.py
+├── plbart
+│   ├── run.sh 
+│   ├── configs.py
+│   ├── models.py
+│   └── run_gen.py
 ├── data
 │   ├── java
 │   │    ├──jsons
@@ -24,15 +31,27 @@ wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeN
 │   │    ├──processed
 │   ├── atcoder_test_cases
 │   └── processed.json
-│   
+├── third_party
+│   ├── apex
+│   ├── fairseq
+│   ├── tree-sitter-cpp
+│   ├── tree-sitter-java
+│   └── tree-sitter-python
 │
 ├── evaluation
 │   ├── CodeBLEU 
 │   ├── codegen 
-│   └── execution_evaluation_TC.py
+│   ├── bleu.py
+│   ├── compile.py
+│   ├── compute_ca.py
+│   ├── evaluator.py
+│   └── execution_evaluation_TC_arc_MP.py
 └── src
     ├── make_submission_list_json.py
     ├── process_json.py
+    ├── deduplication.py
+    ├── generate_eval_files.py
+    ├── merge.py
     └── split.py
 ```
 # Additional Downloads (Incomplete link)
