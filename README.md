@@ -44,7 +44,7 @@
     ├── merge.py
     └── split.py
 ```
-### Download project Codenet
+### Download Project Codenet Dataset
 Run this command to download the whole codenet dataset(Around 8GB zipped file) in the root directory and decompress it.
 ```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet.tar.gz?_ga=2.133483278.1486692882.1645896851-1137262026.1645896851
@@ -80,7 +80,7 @@ conda env create -n python -f src/environment.yml
 conda activate python36
 ```
 
-### Creating Preprocessed json
+### Create Pre-processed File 
 src/make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
 
 processed is a dictionary containing a list of user_id's containing information about each user processed.keys(). <br>
@@ -95,7 +95,7 @@ python make_submission_list_json.py
 cd ../
 ```
 
-### Create language Specific Data (Skip this part if you just want to download our version)
+### Create Language Specific Data (Skip this part if you just want to download our version)
 We use the 'processed.json' file to create the training data chunk by chunk(10k per file) and store them in the data folder in individual language folders. The same code preprocesses and stores both java and python data in json format in folders named data/{language}/jsons/.
 ```
 cd src
@@ -110,7 +110,7 @@ unzip processed.zip
 cd ../
 ```
 
-### Split the data
+### Split The Data
 split.py merges all the json chunks, deduplicates using jaccard similarity function and splits the data in train-valid-test (80-10-10) ratio on problem level so that no datapoints for a single problem exists in multiple splits like train and test. During the split We also mantaining the condition that for all the datapoints in valid and test set we have the test cases available so that execution based evaluation can be done in both valid and test set. 
 ```
 cd src
@@ -120,14 +120,14 @@ cd ../
 ```
 
 ### Run these commands if you just want to download the processed data and train
-### Download and unzip java dataset 
+#### Download and unzip java dataset 
 ```
 cd data
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1vsuUrJ2j86EYGb2WWQatqsqJ-V8Sl6en' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1vsuUrJ2j86EYGb2WWQatqsqJ-V8Sl6en" -O java.zip && rm -rf /tmp/cookies.txt
 unzip java.zip
 cd ../
 ```
-### Download and unzip python dataset 
+#### Download and unzip python dataset 
 ```
 cd data
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1rjjYW8SB8f5Hr34ig84OKpNYOzdt03Ar' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1rjjYW8SB8f5Hr34ig84OKpNYOzdt03Ar" -O python.zip && rm -rf /tmp/cookies.txt
