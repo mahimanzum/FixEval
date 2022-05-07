@@ -79,6 +79,7 @@ Another way will be( You may need to manually add some libraries):
 conda env create -n python -f src/environment.yml
 conda activate python36
 ```
+All the commands below assumes that you installed everything on this environment correctly and activate the environment. 
 
 ### Create Pre-processed File 
 src/make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
@@ -110,7 +111,7 @@ unzip processed.zip
 cd ../
 ```
 
-### Split The Data
+#### Split The Data
 split.py merges all the json chunks, deduplicates using jaccard similarity function and splits the data in train-valid-test (80-10-10) ratio on problem level so that no datapoints for a single problem exists in multiple splits like train and test. During the split We also mantaining the condition that for all the datapoints in valid and test set we have the test cases available so that execution based evaluation can be done in both valid and test set. 
 ```
 cd src
@@ -134,6 +135,16 @@ wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download
 unzip python.zip
 cd ../
 ```
+After successfull completion till this part we have 4 datasets.  <br>
+java buggy to java fixed in, (data/java/processed/) <br>
+java buggy with verdict information to java fixed in (data/java/processed_with_verdict/)<br>
+python buggy code to python fixed code in (data/python/processed/)<br>
+python buggy code with verdict information to python fixed code in (data/python/processed_with_verdict/)<br>
+
+All of these 4 folders contain {train, test, eval}.jsonl file containing all the information for the datapoints so the we can always reverse back to the original data <br>
+contains {train, valid, test}.{language-language}.id files where language is [java, python] <br>
+Also contains 6 raw test files for training.  <br>
+{src, tgt}_{train, valid, test}.{language-language}.language
 
 
 ### Training the model and evaluating on the dataset
@@ -156,4 +167,37 @@ nohup ./run.sh
 ```
 
 ### Evaluate on Execution 
+This will take the test.json file in each of the data generate 
+```
+cd src/
+python generate_eval_files.py 
+python generate_eval_files.py --with_verdict True
+python generate_eval_files.py --lang python
+python generate_eval_files.py --with_verdict True --lang python
+cd ../
+```
+These commands will create additional 4 files in the 4 core data folders in data/language/{processed, processed_with_verdict} named eval.
+The main difference between eval and test set is that {train, test, valid} are created using our split method and all the datapoints ar split between these. <br>
+But eval files are sampled from the test datapoints using generate_eval_files.py keeping the true data distribution similar to the test file but smaller(500 in our case) just to make the runtime and computational complexity in check as we need to generate multiple submissions and run each of them in many test cases to calculate our pass@k accuracy.
+
+#### First lets generate the test file
+This 
+#### Now lets generate the predictions on the test file
+
+
+#### pre-preprocess the test file that contains all tokenized and detokenized source , target and prediction on all beam size
+First We need to create a self contrained json containing all the necessary versions to detokenize the code and execute. 
+
 This part is not included in the usual evaluation because changes are requires based on system to run this efficiently.
+First we expect the test cases folder and the problem_list.csv file is in the root directory so lets copy those. 
+
+```
+cd plbart/
+nohup ./run.sh
+```
+
+#### Finally lets run the code to execute and evaluate
+python execution_evaluation_TC.py --input ../data/Python/processed/test.jsonl --lang py --test_cases ../src/atcoder_test_cases
+
+#### use results.py to get the results 
+pass@k
