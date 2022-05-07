@@ -58,7 +58,7 @@ tar -xf Project_CodeNet_metadata.tar.gz
 ```
 
 
-## download all the test cases of atcoder 
+## Download Test Cases 
 Make the data folder to store the test cases, along with java , python data files.
 ```
 mkdir data
@@ -68,7 +68,7 @@ unzip atcoder_test_cases.zip
 cd ../
 ```
 
-## Environment creation  information
+## Environment Creation
 Best way is to run this command(You may need to change the bash file to change your preferance on environment names etc.)
 ```
 bash install_env.sh
@@ -80,7 +80,7 @@ conda env create -n python -f src/environment.yml
 conda activate python36
 ```
 
-# creating preprocessed json
+# Creating Preprocessed json
 src/make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
 
 processed is a dictionary containing a list of user_id's containing information about each user processed.keys(). <br>
@@ -95,7 +95,7 @@ python make_submission_list_json.py
 cd ../
 ```
 
-# creating training data (Skip this part if you just want to download our version)
+# Create language Specific Data (Skip this part if you just want to download our version)
 We use the 'processed.json' file to create the training data chunk by chunk(10k per file) and store them in the data folder in individual language folders. The same code preprocesses and stores both java and python data in json format in folders named data/{language}/jsons/.
 ```
 cd src
@@ -110,7 +110,7 @@ unzip processed.zip
 cd ../
 ```
 
-## splitting the data
+## Split the data
 split.py merges all the json chunks, deduplicates using jaccard similarity function and splits the data in train-valid-test (80-10-10) ratio on problem level so that no datapoints for a single problem exists in multiple splits like train and test. During the split We also mantaining the condition that for all the datapoints in valid and test set we have the test cases available so that execution based evaluation can be done in both valid and test set. 
 ```
 cd src
@@ -136,7 +136,7 @@ cd ../
 ```
 
 
-# training the model and evaluating on the data
+# Training the model and evaluating on the dataset
 To run the codet5 model go to that folder and use run.sh. This will also evalualte the model on execution_evaluation, BLEU, CodeBleu, Syntax match dataflow match all at the same time.
 some changes are required in run.sh. <br>
 Change source and target languages online 14-15-> from these ['java', 'python'] <br>
@@ -154,3 +154,6 @@ Similarly for training and evaluating plbart model go to the root directory and 
 cd plbart/
 nohup ./run.sh
 ```
+
+## Evaluate on Execution 
+This part is not included in the usual evaluation because changes are requires based on system to run this efficiently.
