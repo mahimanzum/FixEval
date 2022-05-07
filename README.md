@@ -165,9 +165,18 @@ Similarly for training and evaluating plbart model go to the root directory and 
 cd plbart/
 nohup ./run.sh
 ```
+The run.sh for each of the model folders contain 3 function. <br>
+train -> Trains that specific model and saves the checkpoints and logs all the necessary matrices
+evaluate -> loades a pretrained model (usually the checkpoint-best-ppl) model and Evaluates all the usual matrices except the execution based evaluation with pass@k accuracy. <br>
+generate -> Loads a pretrained model (usually the checkpoint-best-ppl) and generates a json file with the predictions from the loaded model.
 
 ### Evaluate on Execution 
-This will take the test.json file in each of the data generate 
+This part is not included in the usual evaluation because changes are requires based on system to run this efficiently. <br>
+
+First run these commands. These commands will create additional 4 splits in the 4 core data folders in data/language/{processed, processed_with_verdict} named eval which similar to train , valid and test but smaller.
+The main difference between eval and test set is that {train, test, valid} are created using our split method and all the datapoints ar split between these. <br>
+But here we create eval split which is sampled from the test datapoints using generate_eval_files.py keeping the true data distribution similar to the test file but smaller(500 in our case) just to make the runtime and computational complexity in check as we need to generate multiple submissions and run each of them in many test cases to calculate our pass@k accuracy.
+
 ```
 cd src/
 python generate_eval_files.py 
@@ -176,28 +185,44 @@ python generate_eval_files.py --lang python
 python generate_eval_files.py --with_verdict True --lang python
 cd ../
 ```
-These commands will create additional 4 files in the 4 core data folders in data/language/{processed, processed_with_verdict} named eval.
-The main difference between eval and test set is that {train, test, valid} are created using our split method and all the datapoints ar split between these. <br>
-But eval files are sampled from the test datapoints using generate_eval_files.py keeping the true data distribution similar to the test file but smaller(500 in our case) just to make the runtime and computational complexity in check as we need to generate multiple submissions and run each of them in many test cases to calculate our pass@k accuracy.
 
 #### First lets generate the test file
-This 
-#### Now lets generate the predictions on the test file
-
-
-#### pre-preprocess the test file that contains all tokenized and detokenized source , target and prediction on all beam size
-First We need to create a self contrained json containing all the necessary versions to detokenize the code and execute. 
-
-This part is not included in the usual evaluation because changes are requires based on system to run this efficiently.
-First we expect the test cases folder and the problem_list.csv file is in the root directory so lets copy those. 
-
+Just go to that specific model folder and execute the run.sh command with only generate function uncommented and save_dir, path_2_data, and languages set to the correct versions. for example
 ```
 cd plbart/
-nohup ./run.sh
+./run.sh
 ```
 
-#### Finally lets run the code to execute and evaluate
-python execution_evaluation_TC.py --input ../data/Python/processed/test.jsonl --lang py --test_cases ../src/atcoder_test_cases
+#### pre-preprocess the test file that contains all tokenized and detokenized source , target and prediction on all beam size
 
+First We need to create a self contrained json containing all the necessary versions to detokenize the code and execute. We split this portion explicitly because we use ARC(Advanced Research Computing), Virginia Tech for parallel running of these code and installing all the libraries required to tokenize java and python codes is not possible in the ARC supercomputer. So we do it elsewhere and create this self contained json file which can be used to generate results. 
+
+```
+cd src/
+python merge.py --references data/java/processed/generation.json --language java
+python merge.py --references data/java/processed_with_verdict/generation.json --language java
+python merge.py --references data/python/processed/generation.json --language python
+python merge.py --references data/python/processed_with_verdict/generation.json --language python
+cd ../
+```
+These will create 4 json files. You might need to change the output file names just for clarification.
+
+#### Finally lets run the code to execute and evaluate
+First we expect the "test cases folder" and the "problem_list.csv" file is in the root directory so lets copy those. <br>
+
+```
+cp -r data/atcoder_test_cases atcoder_test_cases
+cp Project_CodeNet/metadata/problem_list.csv problem_list.csv 
+```
+Now lets run the Execute and evaluate method
+```
+python evaluation/execution_evaluation_TC_arc_MP.py --references test_python2python_with_verdict_output.jsonl --language python --test_cases atcoder_test_cases --problem_list problem_list.csv
+```
+To run on arc We provide a file for using in slurm clusters where you might need to change some credectials.
+```
+sbatch batch_run.sh
+```
+Any of the previous commands will create a json file which will contain all the fields necessary for visualizing and getting pass@k accuracy.
 #### use results.py to get the results 
-pass@k
+We can use results.py to generate the results
+We can also use the previous json in the src/01_preprocessing.ipynb notebook for visualizing.
