@@ -19,6 +19,7 @@ def add_lang_by_task(target_str, task, sub_task):
 
 
 def convert_examples_to_features(item):
+    #print('############ coming into convert_examples_to_features')
     example, example_index, tokenizer, args, stage = item
 
     if args.model_type in ['t5', 'codet5'] and args.add_task_prefix:
@@ -30,6 +31,8 @@ def convert_examples_to_features(item):
         source_str = example.source
 
     source_str = source_str.replace('</s>', '<unk>')
+    #print("########## src str ########")
+    #print(source_str)
     source_ids = tokenizer.encode(
         source_str,
         max_length=args.max_source_length,
@@ -58,7 +61,15 @@ def convert_examples_to_features(item):
             truncation=True
         )
         assert target_ids.count(tokenizer.eos_token_id) == 1
-
+    #print("########## src while preprocessing ########")
+    #for lst in source_ids:
+    #    print([tokenizer.decode(id,skip_special_tokens=False, clean_up_tokenization_spaces=False) for id in lst])
+        
+    #print([tokenizer.decode(id,skip_special_tokens=False, clean_up_tokenization_spaces=False) for id in source_ids])
+    #print("######### tgt #########")
+    #print([tokenizer.decode(id, clean_up_tokenization_spaces=False) for id in target_ids])
+    #print("##################")
+    
     return InputFeatures(
         example_index,
         source_ids,

@@ -11,8 +11,8 @@ codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
 TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
-SOURCE=${2:-python};
-TARGET=${3:-python};
+SOURCE=${2:-java};
+TARGET=${3:-java};
 DATA_SRC=${4:-codenet};
 
 export CUDA_VISIBLE_DEVICES=$GPU
@@ -155,12 +155,15 @@ python run_gen.py \
     --data_num -1 \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
+'''
 GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
 python $evaluator_script/evaluator.py \
     --references $GOUND_TRUTH_PATH \
     --predictions $SAVE_DIR/test.src \
     --language $TARGET;
+'''
 # remove cached data
+
 #train;
 #evaluate;
-#generate;
+generate;

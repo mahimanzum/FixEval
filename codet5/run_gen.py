@@ -424,12 +424,12 @@ def main():
         if os.path.isfile(file):
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))
+            model.to(args.device)
             #print("args.test_filename = ", args.test_filename)
             eval_examples, eval_data = load_and_cache_gen_data(
-                args, '/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/src_eval.python-python.python,/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/tgt_eval.python-python.python', pool, tokenizer, 'eval', only_src=True, is_sample=False
+                args, '/home/mahim/program_repair/CodeNet/data/java/processed/src_eval.java-java.java,/home/mahim/program_repair/CodeNet/data/java/processed/tgt_eval.java-java.java', pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
             
-        
             logger.info("  Num examples = %d", len(eval_examples))
             logger.info("  Batch size = %d", args.eval_batch_size)
             eval_sampler = SequentialSampler(eval_data)
@@ -441,60 +441,58 @@ def main():
                 eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
             model.eval()
-            pred_ids = []
-            for batch in tqdm(eval_dataloader, total=len(eval_dataloader), desc="Generating Data:"):
-                
-                source_ids = batch[0].to(args.device)
-                source_mask = source_ids.ne(tokenizer.pad_token_id)
-                #print(len(batch))
-                #print(source_ids.shape)
-                with torch.no_grad():
-                    
-                    preds = model.generate(source_ids,
-                                        attention_mask=source_mask,
-                                        use_cache=True,
-                                        num_beams=args.beam_size,
-                                        num_return_sequences=args.beam_size,
-                                        top_p=0.95,
-                                        top_k=50,#do_sample=True,
-                                        temperature=0.7,
-                                        early_stopping=args.task == 'summarize',
-                                        max_length=args.max_target_length)
-                    '''
-                    preds = model.generate(source_ids,
-                                        attention_mask=source_mask,
-                                        use_cache=True,
-                                        num_beams=args.beam_size,
-                                        early_stopping=args.task == 'summarize',
-                                        max_length=args.max_target_length)
-                    '''
-                    top_preds = list(preds.cpu().numpy())
-                    #print(len(top_preds))
-                    #print(top_preds)
-                    pred_ids.extend(top_preds)
-                    #break # for debugging
-            # pdb.set_trace()
-            pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
+            for temp in [0.2, 0.4, 0.6, 0.8, 1.0, 1.2]:
+                pred_ids = []
+                for batch in tqdm(eval_dataloader, total=len(eval_dataloader), desc="Generating Data:"):
+                    source_ids = batch[0].to(args.device)
+                    source_mask = source_ids.ne(tokenizer.pad_token_id)
+                    #print(len(batch))
+                    #print(source_ids.shape)
+                    with torch.no_grad():
+                        
+                        preds = model.generate(source_ids,
+                                            attention_mask=source_mask,
+                                            use_cache=True,
+                                            num_beams=args.beam_size,
+                                            num_return_sequences=args.beam_size,
+                                            top_p=0.95,
+                                            temperature=temp,
+                                            early_stopping=args.task == 'summarize',
+                                            max_length=args.max_target_length)
+                        '''
+                        preds = model.generate(source_ids,
+                                            attention_mask=source_mask,
+                                            use_cache=True,
+                                            num_beams=args.beam_size,
+                                            early_stopping=args.task == 'summarize',
+                                            max_length=args.max_target_length)
+                        '''
+                        top_preds = list(preds.cpu().numpy())
+                        #print(len(top_preds))
+                        #print(top_preds)
+                        pred_ids.extend(top_preds)
+                        #break # for debugging
+                # pdb.set_trace()
+                pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
 
 
-            def write_json(data, path):
-                a_file = open(path, "w")
-                json.dump(data, a_file)
-                a_file.close()
+                def write_json(data, path):
+                    a_file = open(path, "w")
+                    json.dump(data, a_file)
+                    a_file.close()
 
-            id_file = os.path.join(args.data_dir,'eval.'+args.sub_task+'.id')
-            ids = open(id_file).read().strip().split("\n")
-            generated = []
-            for idx, gold in enumerate(eval_examples):
-                data = {}
-                data['idx'] = idx
-                data['tgt'] = gold.target.strip()
-                data['tgt_id'] = ids[idx]
-                data['src'] = gold.source.strip()
-                data['generations'] = pred_nls[args.beam_size*idx:args.beam_size*(idx+1)]
-                generated.append(data)
-
-            write_json(generated, os.path.join(args.res_dir,'generation.json'))
+                id_file = os.path.join(args.data_dir,'eval.'+args.sub_task+'.id')
+                ids = open(id_file).read().strip().split("\n")
+                generated = []
+                for idx, gold in enumerate(eval_examples):
+                    data = {}
+                    data['idx'] = idx
+                    data['tgt'] = gold.target.strip()
+                    data['tgt_id'] = ids[idx]
+                    data['src'] = gold.source.strip()
+                    data['generations'] = pred_nls[args.beam_size*idx:args.beam_size*(idx+1)]
+                    generated.append(data)
+                write_json(generated, os.path.join(args.res_dir,f'generation_temp_{str(temp)}.json'))
             
     if args.do_multi_generate:
         logger.info("  " + "***** Just multi generating *****")

@@ -1,59 +1,49 @@
+import java . io . * ;
 import java . util . * ;
 public class Main {
-  public static void main ( String args [ ] ) {
-    Scanner sc = new Scanner ( System . in ) ;
-    long mod = 1000000007 ;
-    int n = sc . nextInt ( ) ;
-    int q = sc . nextInt ( ) ;
-    int [ ] a = new int [ n ] ;
+  static BufferedReader br ;
+  static int cin ( ) throws Exception {
+    return Integer . valueOf ( br . readLine ( ) ) ;
+  }
+  static int [ ] split ( ) throws Exception {
+    String [ ] cmd = br . readLine ( ) . split ( " " ) ;
+    int [ ] ans = new int [ cmd . length ] ;
     for ( int i = 0 ;
-    i < n ;
+    i < cmd . length ;
     i ++ ) {
-      a [ i ] = sc . nextInt ( ) ;
+      ans [ i ] = Integer . valueOf ( cmd [ i ] ) ;
     }
-    long dp [ ] [ ] = new long [ n ] [ n ] ;
+    return ans ;
+  }
+  static long [ ] splitL ( ) throws IOException {
+    String [ ] cmd = br . readLine ( ) . split ( " " ) ;
+    long [ ] ans = new long [ cmd . length ] ;
     for ( int i = 0 ;
-    i < n ;
+    i < cmd . length ;
     i ++ ) {
+      ans [ i ] = Long . valueOf ( cmd [ i ] ) ;
+    }
+    return ans ;
+  }
+  static long mod = 1000000007 ;
+  public static void main ( String [ ] args ) throws Exception {
+    br = new BufferedReader ( new InputStreamReader ( System . in ) ) ;
+    int n = cin ( ) ;
+    long [ ] arr = splitL ( ) ;
+    long ans = 0 ;
+    for ( int i = 0 ;
+    i < 60 ;
+    i ++ ) {
+      int zeros = 0 ;
+      int ones = 0 ;
       for ( int j = 0 ;
       j < n ;
       j ++ ) {
-        if ( a [ i ] > a [ j ] ) dp [ i ] [ j ] = 1 ;
+        if ( ( ( ( long ) 1 << i ) & arr [ j ] ) == 0 ) zeros ++ ;
+        else ones ++ ;
       }
+      ans = ( ans + ( long ) Math . pow ( 2 , i ) * ( long ) ( ones * zeros ) ) % mod ;
     }
-    long half = inverse ( 2 , mod ) ;
-    for ( int i = 0 ;
-    i < q ;
-    i ++ ) {
-      int x = sc . nextInt ( ) ;
-      int y = sc . nextInt ( ) ;
-      for ( int j = 0 ;
-      j < n ;
-      j ++ ) {
-        if ( j != y - 1 && j != x - 1 ) {
-          dp [ y - 1 ] [ j ] = dp [ x - 1 ] [ j ] = ( half * dp [ x - 1 ] [ j ] % mod + half * dp [ y - 1 ] [ j ] % mod ) % mod ;
-          dp [ j ] [ x - 1 ] = dp [ j ] [ y - 1 ] = ( half * dp [ j ] [ x - 1 ] % mod + half * dp [ j ] [ y - 1 ] % mod ) % mod ;
-        }
-        dp [ y - 1 ] [ x - 1 ] = dp [ x - 1 ] [ y - 1 ] = ( half * dp [ y - 1 ] [ x - 1 ] % mod + half * dp [ x - 1 ] [ y - 1 ] % mod ) % mod ;
-      }
-    }
-    long expectation = 0 ;
-    for ( int i = 0 ;
-    i < n ;
-    i ++ ) {
-      for ( int j = i + 1 ;
-      j < n ;
-      j ++ ) {
-        expectation = ( expectation + dp [ i ] [ j ] ) % mod ;
-      }
-    }
-    System . out . println ( expectation * bin_exp ( 2 , q , mod ) % mod ) ;
-  }
-  public static long bin_exp ( long base , long exp , long mod ) {
-    if ( exp == 0 ) return 1 ;
-    return bin_exp ( base * base % mod , exp / 2 , mod ) * ( exp % 2 == 1 ? base : 1 ) % mod ;
-  }
-  public static long inverse ( long a , long mod ) {
-    return bin_exp ( a , mod - 2 , mod ) ;
+    System . out . println ( ans ) ;
   }
 }

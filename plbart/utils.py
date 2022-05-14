@@ -8,12 +8,13 @@ import random
 import torch
 import time
 from tqdm import tqdm
-from codet5._utils import *
+from plbart._utils import *
 
 logger = logging.getLogger(__name__)
 
 
 def load_and_cache_gen_data(args, filename, pool, tokenizer, split_tag, only_src=False, is_sample=False):
+    #print('############ coming into cache ')
     # cache the data into args.cache_path except it is sampled
     # only_src: control whether to return only source ids for bleu evaluating (dev/test)
     # return: examples (Example object), data (TensorDataset)
@@ -37,8 +38,18 @@ def load_and_cache_gen_data(args, filename, pool, tokenizer, split_tag, only_src
         else:
             logger.info("Create cache data into %s", cache_fn)
         tuple_examples = [(example, idx, tokenizer, args, split_tag) for idx, example in enumerate(examples)]
+        #print('############ coming before pool')
+    
         features = pool.map(convert_examples_to_features, tqdm(tuple_examples, total=len(tuple_examples)))
+        #print(tuple_examples)
+        #features = [convert_examples_to_features(ex) for ex in tqdm(tuple_examples, total=len(tuple_examples))]
+        
         all_source_ids = torch.tensor([f.source_ids for f in features], dtype=torch.long)
+        #print("###################### all ######################")
+        #for lst in all_source_ids:
+        #    print([tokenizer.decode(id,skip_special_tokens=False, clean_up_tokenization_spaces=False) for id in lst])
+        #print("###################### all ######################")
+        
         if split_tag == 'test' or only_src:
             data = TensorDataset(all_source_ids)
         else:
@@ -46,6 +57,8 @@ def load_and_cache_gen_data(args, filename, pool, tokenizer, split_tag, only_src
             data = TensorDataset(all_source_ids, all_target_ids)
         if args.local_rank in [-1, 0] and not is_sample:
             torch.save(data, cache_fn)
+        
+        
     return examples, data
 
 

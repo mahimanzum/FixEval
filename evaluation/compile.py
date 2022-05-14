@@ -1,6 +1,6 @@
 import os
 import sys
-
+import shutil
 sys.path.append("..")
 
 import argparse
@@ -61,6 +61,9 @@ def check_java(args):
     success, error, num_errors = 0, 0, 0
     for program in tqdm(programs, total=len(programs)):
         # find public class name
+        #print(program)
+        #rint("#####")
+        #program=program.replace("import .", "import java .")
         public_class_name = 'main'
         if "public class" in program:
             tokens = program.split("public class", 1)
@@ -68,12 +71,15 @@ def check_java(args):
                 public_class_name = tokens[1].split()[0]
 
         program = jprocessor.detokenize_code(program)
-        filename = '{}.java'.format(public_class_name)
-        class_filename = '{}.class'.format(public_class_name)
+        filename = 'garbage/{}.java'.format(public_class_name)
+        class_filename = 'garbage/{}.class'.format(public_class_name)
+        #program.replace("import . util . * ;", "import java . util . * ;")
         with open(filename, 'w', encoding='utf8')as fw:
             fw.write(program)
 
-        command = ["javac", filename]
+        #print(program)
+        #print("####")
+        command = ["javac", filename, "-d", "garbage/"]
         try:
             check_output(command, stderr=STDOUT)
             success += 1
@@ -81,12 +87,27 @@ def check_java(args):
             error += 1
             error_count = e.output.decode().split()[-2]
             num_errors += int(error_count)
-
-        if os.path.isfile(filename):
-            os.remove(filename)
-        if os.path.isfile(class_filename):
-            os.remove(class_filename)
-
+            #print(success,error)
+            #print("Error Message: ", e.output.decode())
+            #print("#####  ")
+            #print(program)
+            #print("###########################")
+        
+        dir = 'garbage'
+        for filename in os.listdir(dir):
+            file_path = os.path.join(dir, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+        #if os.path.isfile(filename):
+        #    os.remove(filename)
+        #if os.path.isfile(class_filename):
+        #    os.remove(class_filename)
+        #os.system("rm *.class > /dev/null")
     print('Success - {}, Errors - {} [Total - {}]'.format(success, error, num_errors))
 
 

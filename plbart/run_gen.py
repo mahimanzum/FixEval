@@ -123,7 +123,26 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
             pred_ids.extend(top_preds)
             #break # for debugging
     # pdb.set_trace()
-    pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
+    #pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
+
+    pred_nls = []
+    temps = []
+    for lst in pred_ids:
+        temp = []
+        for id in lst:
+            token = tokenizer.decode(id,skip_special_tokens=True, clean_up_tokenization_spaces=False)
+            if token not in ['<s>', '</s>', '<unk>', '<pad>']:
+                #print(token)
+                temp.append(token)
+        temps.append(" ".join(temp))
+        #temps.append(" ".join([ tokenizer.decode(id,skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in lst]))
+    
+    #tokenized_temps =  [tokenizer.encode(program) for program in temps]
+    
+    #pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in tokenized_temps]
+    pred_nls = temps[:]
+    #print("################               New                   #### ")
+    #print(pred_nls[0])
 
     output_fn = os.path.join(args.res_dir, "{}.output".format(split_tag))
     gold_fn = os.path.join(args.res_dir, "{}.gold".format(split_tag))
@@ -409,6 +428,7 @@ def main():
             if os.path.isfile(file):
                 logger.info("Reload model from {}".format(file))
                 model.load_state_dict(torch.load(file))
+                model.to(args.device)
 
                 eval_examples, eval_data = load_and_cache_gen_data(
                     args, args.test_filename, pool, tokenizer, 'test', only_src=True, is_sample=False
@@ -433,12 +453,12 @@ def main():
         if os.path.isfile(file):
             logger.info("Reload model from {}".format(file))
             model.load_state_dict(torch.load(file))
+            model.to(args.device)
             #print("args.test_filename = ", args.test_filename)
+            print('############ going into cache ')
             eval_examples, eval_data = load_and_cache_gen_data(
                 args, '/home/mahim/program_repair/CodeNet/data/java/processed/src_eval.java-java.java,/home/mahim/program_repair/CodeNet/data/java/processed/tgt_eval.java-java.java', pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
-            
-        
             logger.info("  Num examples = %d", len(eval_examples))
             logger.info("  Batch size = %d", args.eval_batch_size)
             eval_sampler = SequentialSampler(eval_data)
@@ -451,9 +471,15 @@ def main():
 
             model.eval()
             pred_ids = []
-            for batch in tqdm(eval_dataloader, total=len(eval_dataloader), desc="Generating Data:"):
-                
+            for batch in tqdm(eval_dataloader, total=len(eval_dataloader), desc="Generating Data:"):    
+                print("######## src after loading ##############")
+                #print(tokenizer)
+                #print([tokenizer.decode(id, skip_special_tokens=False, clean_up_tokenization_spaces=False) for id in batch[0]])
+                #for lst in batch[0]:
+                #    print([tokenizer.decode(id,skip_special_tokens=False, clean_up_tokenization_spaces=False) for id in lst])
+        
                 source_ids = batch[0].to(args.device)
+                
                 source_mask = source_ids.ne(tokenizer.pad_token_id)
                 #print(len(batch))
                 #print(source_ids.shape)
@@ -478,13 +504,17 @@ def main():
                                         max_length=args.max_target_length)
                     '''
                     top_preds = list(preds.cpu().numpy())
-                    #print(len(top_preds))
-                    #print(top_preds)
+                    
                     pred_ids.extend(top_preds)
                     #break # for debugging
+                #break
             # pdb.set_trace()
-            pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
-
+            pred_nls = []
+            for lst in pred_ids:
+                pred_nls.append(" ".join([tokenizer.decode(id,skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in lst]))
+        
+            #pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
+            
 
             def write_json(data, path):
                 a_file = open(path, "w")
