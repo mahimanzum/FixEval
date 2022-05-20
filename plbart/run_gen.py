@@ -123,8 +123,8 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
             pred_ids.extend(top_preds)
             #break # for debugging
     # pdb.set_trace()
-    #pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
-
+    pred_nls = [tokenizer.decode(id, skip_special_tokens=True, clean_up_tokenization_spaces=False) for id in pred_ids]
+    '''
     pred_nls = []
     temps = []
     for lst in pred_ids:
@@ -143,7 +143,7 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
     pred_nls = temps[:]
     #print("################               New                   #### ")
     #print(pred_nls[0])
-
+    '''
     output_fn = os.path.join(args.res_dir, "{}.output".format(split_tag))
     gold_fn = os.path.join(args.res_dir, "{}.gold".format(split_tag))
     src_fn = os.path.join(args.res_dir, "{}.src".format(split_tag))
