@@ -44,16 +44,18 @@
     ├── merge.py
     └── split.py
 ```
-### Download Project Codenet Dataset
+## Run all these commands into the root folder
+## Downloading Portions
+### Download Project Codenet Dataset (Skip this if you want to run from our preprocessed files)
 Run this command to download the whole codenet dataset(Around 8GB zipped file) in the root directory and decompress it.
 ```
-wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet.tar.gz?_ga=2.133483278.1486692882.1645896851-1137262026.1645896851
+wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet.tar.gz
 tar -xf Project_CodeNet.tar.gz
 ```
 ### Codenet Metadata
 Run this command to download codenet Metadata (281Mb zip file) in the root directory and decompress it
 ```
-wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet_metadata.tar.gz?_ga=2.191718442.1486692882.1645896851-1137262026.1645896851
+wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet_metadata.tar.gz
 tar -xf Project_CodeNet_metadata.tar.gz
 ```
 
@@ -61,14 +63,12 @@ tar -xf Project_CodeNet_metadata.tar.gz
 ### Download Test Cases 
 Make the data folder to store the test cases, along with java , python data files.
 ```
-mkdir data
-cd data
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1AInTHzaZqym7WsT1B7yc8nZy7dA3ovPf' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1AInTHzaZqym7WsT1B7yc8nZy7dA3ovPf" -O atcoder_test_cases.zip && rm -rf /tmp/cookies.txt
 unzip atcoder_test_cases.zip
 cd ../
 ```
+## Installation Portion
 
-### Environment Creation
 Best way is to run this command(You may need to change the bash file to change your preferance on environment names etc.)
 ```
 bash install_env.sh
@@ -81,7 +81,7 @@ conda activate python36
 ```
 All the commands below assumes that you installed everything on this environment correctly and activate the environment. 
 
-### Create Pre-processed File 
+### Create Pre-processed File (Skip this if you want to run from our preprocessed files)
 src/make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
 
 processed is a dictionary containing a list of user_id's containing information about each user processed.keys(). <br>
@@ -111,7 +111,7 @@ unzip processed.zip
 cd ../
 ```
 
-#### Split The Data
+#### Split The Data (Skip this if you want to run from our preprocessed files)
 split.py merges all the json chunks, deduplicates using jaccard similarity function and splits the data in train-valid-test (80-10-10) ratio on problem level so that no datapoints for a single problem exists in multiple splits like train and test. During the split We also mantaining the condition that for all the datapoints in valid and test set we have the test cases available so that execution based evaluation can be done in both valid and test set. 
 ```
 cd src
@@ -123,17 +123,13 @@ cd ../
 ### Run these commands if you just want to download the processed data and train
 #### Download and unzip java dataset 
 ```
-cd data
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1vsuUrJ2j86EYGb2WWQatqsqJ-V8Sl6en' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1vsuUrJ2j86EYGb2WWQatqsqJ-V8Sl6en" -O java.zip && rm -rf /tmp/cookies.txt
 unzip java.zip
-cd ../
 ```
 #### Download and unzip python dataset 
 ```
-cd data
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1rjjYW8SB8f5Hr34ig84OKpNYOzdt03Ar' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1rjjYW8SB8f5Hr34ig84OKpNYOzdt03Ar" -O python.zip && rm -rf /tmp/cookies.txt
 unzip python.zip
-cd ../
 ```
 After successfull completion till this part we have 4 datasets.  <br>
 java buggy to java fixed in, (data/java/processed/) <br>
@@ -146,6 +142,7 @@ contains {train, valid, test}.{language-language}.id files where language is [ja
 Also contains 6 raw test files for training.  <br>
 {src, tgt}_{train, valid, test}.{language-language}.language
 
+## Training and Evaluation Portion
 
 ### Training the model and evaluating on the dataset
 To run the codet5 model go to that folder and use run.sh. This will also evalualte the model on execution_evaluation, BLEU, CodeBleu, Syntax match dataflow match all at the same time.
@@ -170,6 +167,7 @@ train -> Trains that specific model and saves the checkpoints and logs all the n
 evaluate -> loades a pretrained model (usually the checkpoint-best-ppl) model and Evaluates all the usual matrices except the execution based evaluation with pass@k accuracy. <br>
 generate -> Loads a pretrained model (usually the checkpoint-best-ppl) and generates a json file with the predictions from the loaded model.
 
+## Evaluation
 ### Evaluate on Execution 
 This part is not included in the usual evaluation because changes are requires based on system to run this efficiently. <br>
 
