@@ -7,7 +7,7 @@ conda install six scikit-learn stringcase ply slimit astunparse submitit
 conda install -c conda-forge tensorboard
 pip install transformers=="4.18.0"
 pip install cython
-pip install sacrebleu=="1.2.11" javalang tree_sitter=="0.2.1" psutil fastBPE sentencepiece pandas matplotlib
+pip install sacrebleu=="1.2.11" javalang tree_sitter=="0.20.0" psutil fastBPE sentencepiece pandas matplotlib
 
 cd third_party
 git clone https://github.com/tree-sitter/tree-sitter-cpp.git
