@@ -164,14 +164,20 @@ DATA_SOURCE is "codenet" because stored the preprocessed datra named "codenet". 
 WITH_VERDICT can be either "true" or "false" which means if we want to use the verdict information in the input or not.
 ```
 cd codet5/
-nohup ./run.sh
+nohup ./run.sh 0 java java codenet false
+nohup ./run.sh 0 java java codenet true
+nohup ./run.sh 0 python python codenet false
+nohup ./run.sh 0 python python codenet true
 ```
 
 Similarly for training and evaluating plbart model go to the root directory and run these.
 
 ```
 cd plbart/
-nohup ./run.sh
+nohup ./run.sh 0 java java codenet false
+nohup ./run.sh 0 java java codenet true
+nohup ./run.sh 0 python python codenet false
+nohup ./run.sh 0 python python codenet true
 ```
 The run.sh for each of the model folders contain 3 function. <br>
 train -> Trains that specific model and saves the checkpoints and logs all the necessary matrices
