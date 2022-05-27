@@ -426,8 +426,13 @@ def main():
             model.load_state_dict(torch.load(file))
             model.to(args.device)
             #print("args.test_filename = ", args.test_filename)
+            print("#######               checking done         ###########")
+            
+            print('/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/tgt_eval.LANG-LANG.LANG'.replace("LANG", args.sub_task.split('-')[0]))
+            print(args.sub_task.split('-')[0])
+            print("#######               checking done         ###########")
             eval_examples, eval_data = load_and_cache_gen_data(
-                args, '/home/mahim/program_repair/CodeNet/data/java/processed_with_verdict/src_eval.java-java.java,/home/mahim/program_repair/CodeNet/data/java/processed_with_verdict/tgt_eval.java-java.java', pool, tokenizer, 'eval', only_src=True, is_sample=False
+                args, '/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/tgt_eval.LANG-LANG.LANG'.replace("LANG", args.sub_task.split('-')[0]), pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
             
             logger.info("  Num examples = %d", len(eval_examples))
@@ -449,6 +454,7 @@ def main():
                 #print(len(batch))
                 #print(source_ids.shape)
                 with torch.no_grad():
+                    '''
                     preds = model.generate(source_ids,
                                         attention_mask=source_mask,
                                         use_cache=True, max_length=args.max_target_length)
@@ -458,11 +464,9 @@ def main():
                                         use_cache=True,
                                         num_beams=args.beam_size,
                                         num_return_sequences=args.beam_size,
-                                        top_p=0.95,
-                                        temperature=temp,
                                         early_stopping=args.task == 'summarize',
                                         max_length=args.max_target_length)
-                    
+                    '''
                     preds = model.generate(source_ids,
                                         attention_mask=source_mask,
                                         use_cache=True,
@@ -493,7 +497,7 @@ def main():
                 data['tgt'] = gold.target.strip()
                 data['tgt_id'] = ids[idx]
                 data['src'] = gold.source.strip()
-                data['generation'] = pred_nls[idx]
+                data['generation'] = pred_nls[args.beam_size*idx:args.beam_size*(idx+1)]
                 generated.append(data)
             write_json(generated, os.path.join(args.res_dir,'generation_temp.json'))
             
@@ -507,7 +511,7 @@ def main():
             model.load_state_dict(torch.load(file))
             #print("args.test_filename = ", args.test_filename)
             eval_examples, eval_data = load_and_cache_gen_data(
-                args, '/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/src_eval.python-python.python,/home/mahim/program_repair/CodeNet/data/python/processed_with_verdict/tgt_eval.python-python.python', pool, tokenizer, 'eval', only_src=True, is_sample=False
+                args, '/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/tgt_eval.LANG-LANG.LANG'.replace("LANG", ), pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
             
         

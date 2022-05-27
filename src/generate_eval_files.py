@@ -78,7 +78,7 @@ def generate(args):
                 tgt = " ".join(ex['tgt'])
                 id_writer.write(ex['src_id']+"_"+ex['tgt_id'] + '\n')
                 
-                if args.with_verdict=="yes":
+                if args.with_verdict==True:
                     src_writer.write(src+" verdict: "+ex['src_verdict'] + '\n')
                 else:
                     src_writer.write(src + '\n')

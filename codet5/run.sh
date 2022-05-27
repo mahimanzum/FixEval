@@ -11,18 +11,20 @@ codebleu_path="${CODE_DIR_HOME}/evaluation/CodeBLEU";
 TEST_CASES="../data/atcoder_test_cases";
 
 GPU=${1:-0};
-SOURCE=${2:-java};
-TARGET=${3:-java};
+SOURCE=${2:-python};
+TARGET=${3:-python};
 DATA_SRC=${4:-codenet};
+WITH_VERDICT=${5:-false};
 
 export CUDA_VISIBLE_DEVICES=$GPU
 echo "Source: $SOURCE Target: $TARGET"
 
-if [[ $DATA_SRC == 'codenet' ]]; then
-    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed_with_verdict;#with_verdict
-elif [[ $DATA_SRC == 'g4g' ]]; then
-    path_2_data=${CODE_DIR_HOME}/data/g4g_functions;
+if [[ $WITH_VERDICT == 'false' ]]; then
+    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;#with_verdict
+else
+    path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed_with_verdict
 fi
+
 
 SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#_with_verdict
 CACHE_DIR=${SAVE_DIR}/cached_data
@@ -148,7 +150,7 @@ python run_gen.py \
     --data_dir $path_2_data \
     --cache_path $CACHE_DIR \
     --res_dir $SAVE_DIR \
-    --eval_batch_size 40 \
+    --eval_batch_size 4 \
     --max_source_length $source_length \
     --max_target_length $target_length \
     --beam_size 10 \
@@ -163,6 +165,6 @@ python $evaluator_script/evaluator.py \
     --language $TARGET;
 com
 # remove cached data
-train;
-evaluate;
-#generate;
+#train;
+#evaluate;
+generate;
