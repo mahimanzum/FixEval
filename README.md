@@ -151,6 +151,17 @@ Change source and target languages online 14-15-> from these ['java', 'python'] 
 Change path_2_data line 22 at the end folder name as 'processed' or processed_with_verdict <br>
 Change Line 27 , Model and Cached data save directory to be consistent with the data as well. Append "_with_verdict" if associated data path contains "_with_verdict" as well. <br>
 To just evaluate comment the train function in the bottom of the run.sh file
+
+Each run.sh files have similar structure
+
+```
+./run.sh GPU_ID SRC_LANGUAGE TARGET_LANGUAGE DATA_SOURCE WITH_VERDICT
+```
+
+GPU_ID is basically how many gpus you want to use for single GPU it's usually "0". <br>
+SRC_LANGUAGE, TARGET_LANGUAGE both are usually same for a single run. Both can be either "java" or "python"
+DATA_SOURCE is "codenet" because stored the preprocessed datra named "codenet". It can be anything
+WITH_VERDICT can be either "true" or "false" which means if we want to use the verdict information in the input or not.
 ```
 cd codet5/
 nohup ./run.sh
