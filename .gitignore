@@ -24,6 +24,10 @@ plbart/codenet/
 plbart/garbage/
 plbart/tensorboard
 
+bart/garbage/
+bart/codenet/
+bart/tensorboard/
+
 
 __pycache__/
 *.py[cod]
