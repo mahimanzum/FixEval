@@ -133,18 +133,19 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
             <th colspan=4>pass@k</th>
             <th colspan=4>TCA@K</th>
         </tr>
+        <tr>
+        <td>k = 1</td>
+        <td>k = 3</td>
+        <td>k = 5</td>
+        <td>k = 10</td>
+        <td>k = 1</td>
+        <td>k = 3</td>
+        <td>k = 5</td>
+        <td>k = 10</td>
+        </tr>
     </thead>
     <tbody>
-        <td></td>
-        <td></td>
-        <td>k = 1</td>
-        <td>k = 3</td>
-        <td>k = 5</td>
-        <td>k = 10</td>
-        <td>k = 1</td>
-        <td>k = 3</td>
-        <td>k = 5</td>
-        <td>k = 10</td>
+        
     </tbody>
 </table>
 
