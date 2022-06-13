@@ -145,7 +145,54 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
         </tr>
     </thead>
     <tbody>
-        
+        <tr>
+            <td>Java</td>
+            <td>No</td>
+            <td>8.65</td>
+            <td>15.62</td>
+            <td>19.63</td>
+            <td>24.44</td>
+            <td>41.00</td>
+            <td>34.00</td>
+            <td>32.70</td>
+            <td>29.60</td>
+        </tr>
+        <tr>
+            <td>Java</td>
+            <td>Yes</td> 
+            <td>10.94</td>
+            <td>18.77</td>
+            <td>22.66</td>
+            <td>27.96</td>
+            <td>44.99</td>
+            <td>38.80</td>
+            <td>35.87</td>
+            <td>32.90</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>No</td> 
+            <td>6.86</td>
+            <td>13.07</td>
+            <td>16.27</td>
+            <td>20.51</td>
+            <td>50.20</td>
+            <td>41.20</td>
+            <td>38.50</td>
+            <td>35.20</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>Yes</td> 
+            <td>7.32</td>
+            <td>13.94</td>
+            <td>17.47</td>
+            <td>22.63</td>
+            <td>58.75</td>
+            <td>41.16</td>
+            <td>38.37</td>
+            <td>34.88</td>
+        </tr>
     </tbody>
 </table>
 
