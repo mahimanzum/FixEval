@@ -87,6 +87,36 @@ def generate(args):
             
     single_prepare('eval')
 
+def prepare_again(args):
+    root_path = args.src_dir+args.lang+'/'
+    destination_path = root_path+'processed/'
+    test_file_path =  root_path+ 'processed_with_verdict/eval.jsonl'
+    
+    data = []
+    with open(test_file_path, 'r') as f:
+        data = json.load(f)
+    
+    split = 'eval'
+
+    file_prefix = '{}.{}-{}'.format(split, args.lang,args.lang)
+    id_file = os.path.join(destination_path, '{}.id'.format(file_prefix))
+    src_file = os.path.join(destination_path, 'src_{}.{}'.format(file_prefix, args.lang))
+    tgt_file = os.path.join(destination_path, 'tgt_{}.{}'.format(file_prefix, args.lang))
+
+    with open(id_file, 'w', encoding='utf8') as id_writer, \
+        open(src_file, 'w', encoding='utf8') as src_writer, \
+        open(tgt_file, 'w', encoding='utf8') as tgt_writer:
+
+        for ex in tqdm(data):
+            
+            src = " ".join(ex['src'])
+            tgt = " ".join(ex['tgt'])
+            id_writer.write(ex['src_id']+"_"+ex['tgt_id'] + '\n')
+            src_writer.write(src + '\n')
+            
+            tgt_writer.write(tgt + '\n')
+
+
 if __name__ == '__main__':
     
     # lang either java or python
@@ -96,7 +126,8 @@ if __name__ == '__main__':
     parser.add_argument("--lang", type=str, help='Language', default='java')
 
     parser.add_argument("--src_dir", type=str, help='Source directory', default='../data/') #processed_with_verdict
-    parser.add_argument("--with_verdict", type=bool, help="Name of language",default=False)
+    #parser.add_argument("--with_verdict", type=bool, help="Name of language",default=False)
     
     args = parser.parse_args()
-    generate(args)
+    prepare_again(args)
+    #generate(args)

@@ -21,11 +21,14 @@ echo "Source: $SOURCE Target: $TARGET"
 
 if [[ $WITH_VERDICT == 'false' ]]; then
     path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;#with_verdict
+    SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};#_with_verdict
+
 else
     path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed_with_verdict
+    SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#_with_verdict
+
 fi
 
-SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#_with_verdict
 CACHE_DIR=${SAVE_DIR}/cached_data
 mkdir -p $SAVE_DIR
 mkdir -p $CACHE_DIR

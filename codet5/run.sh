@@ -21,12 +21,14 @@ echo "Source: $SOURCE Target: $TARGET"
 
 if [[ $WITH_VERDICT == 'false' ]]; then
     path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed;#with_verdict
+    SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET};
+
 else
     path_2_data=${CODE_DIR_HOME}/data/${SOURCE}/processed_with_verdict
+    SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#_with_verdict
+
 fi
 
-
-SAVE_DIR=${CURRENT_DIR}/${DATA_SRC}/${SOURCE}2${TARGET}_with_verdict;#_with_verdict
 CACHE_DIR=${SAVE_DIR}/cached_data
 mkdir -p $SAVE_DIR
 mkdir -p $CACHE_DIR
@@ -157,14 +159,14 @@ python run_gen.py \
     --data_num -1 \
     2>&1 | tee ${SAVE_DIR}/generation_evaluation.log;
 }
-<<com
 GOUND_TRUTH_PATH=${path_2_data}/test.jsonl;
-python $evaluator_script/evaluator.py \
-    --references $GOUND_TRUTH_PATH \
-    --predictions $SAVE_DIR/test.src \
-    --language $TARGET;
-com
+cd $codebleu_path;
+python calc_code_bleu.py \
+    --ref $GOUND_TRUTH_PATH \
+    --hyp $SAVE_DIR/test.src \
+    --lang $TARGET;
+
 # remove cached data
 #train;
 #evaluate;
-generate;
+#generate;

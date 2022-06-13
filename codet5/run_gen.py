@@ -426,13 +426,13 @@ def main():
             model.load_state_dict(torch.load(file))
             model.to(args.device)
             #print("args.test_filename = ", args.test_filename)
-            print("#######               checking done         ###########")
+            #print("#######               checking done         ###########")
             
-            print('/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/tgt_eval.LANG-LANG.LANG'.replace("LANG", args.sub_task.split('-')[0]))
-            print(args.sub_task.split('-')[0])
-            print("#######               checking done         ###########")
+            #print('/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/tgt_eval.LANG-LANG.LANG'.replace("LANG", args.sub_task.split('-')[0]))
+            #print(args.sub_task.split('-')[0])
+            #print("#######               checking done         ###########")
             eval_examples, eval_data = load_and_cache_gen_data(
-                args, '/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed_with_verdict/tgt_eval.LANG-LANG.LANG'.replace("LANG", args.sub_task.split('-')[0]), pool, tokenizer, 'eval', only_src=True, is_sample=False
+                args, '/home/mahim/program_repair/CodeNet/data/LANG/processed/src_eval.LANG-LANG.LANG,/home/mahim/program_repair/CodeNet/data/LANG/processed/tgt_eval.LANG-LANG.LANG'.replace("LANG", args.sub_task.split('-')[0]), pool, tokenizer, 'eval', only_src=True, is_sample=False
             )
             
             logger.info("  Num examples = %d", len(eval_examples))
