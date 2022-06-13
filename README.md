@@ -7,6 +7,7 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
     <thead>
         <tr>
             <th>Method</th>
+            <th>Language</th>
             <th>Verdict</th>
             <th>BLEU</th>
             <th>EM</th>
@@ -16,7 +17,29 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
             <th>CA</th>
         </tr>
     </thead>
-
+    <tbody>
+        <tr>
+            <td rowspan=2> Naive Copy </td>
+            <td> Java</td>
+            <td> No</td>
+            <td>80.28</td>
+            <td>0.03</td>
+            <td>84.22</td>
+            <td>53.64</td>
+            <td>75.43</td>
+            <td>89.93</td>
+        </tr>
+         <tr>
+            <td>Python</td>
+            <td>No</td>
+            <td>68.55</td>
+            <td>0.73</td>
+            <td>70.12</td>
+            <td>60.51</td>
+            <td>68.47</td>
+            <td>96.56</td>
+        </tr>
+    </tbody>
 </table>
 
 ### Folder Structure 
