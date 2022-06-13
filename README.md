@@ -1,3 +1,24 @@
+### All data for reproducing the results is available Here:
+```
+https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
+```
+
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Verdict</th>
+            <th>BLEU</th>
+            <th>EM</th>
+            <th>SM</th>
+            <th>DM</th>
+            <th>CB</th>
+            <th>CA</th>
+        </tr>
+    </thead>
+
+</table>
+
 ### Folder Structure 
 ```
 ├── README.md 
