@@ -124,6 +124,29 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
     </tbody>
 </table>
 
+
+<table>
+    <thead>
+        <tr>
+            <th rowspan=2>Language </th>
+            <th rowspan=2>Verdict</th>
+            <th colspan=4>pass@k</th>
+            <th colspan=4>TCA@K</th>
+        </tr>
+    </thead>
+    <tbody>
+        <td>k = 1</td>
+        <td>k = 3</td>
+        <td>k = 5</td>
+        <td>k = 10</td>
+        <td>k = 1</td>
+        <td>k = 3</td>
+        <td>k = 5</td>
+        <td>k = 10</td>
+    </tbody>
+</table>
+
+
 ### Folder Structure 
 ```
 ├── README.md 
