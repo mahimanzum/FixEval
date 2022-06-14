@@ -2,14 +2,8 @@
 
 ## Table of Contents
 
-
-
-## Dataset
-All data for reproducing the results is available Here:
-```
-https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
-```
-
+- [Table of Contents] (#table-of-contents)
+    - [Folder Structure] (#folder-structure)
 
 ## Folder Structure 
 ```
@@ -57,8 +51,14 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
     ├── merge.py
     └── split.py
 ```
-## Download Dataset
-Run all these commands into the root folder
+
+## Dataset
+All data for reproducing the results is available Here:
+```
+https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
+```
+
+Run all these commands into the root folder 
 
 #### Download Project Codenet Dataset (Skip this if you want to run from our preprocessed files)
 Run this command to download the whole codenet dataset(Around 8GB zipped file) in the root directory and decompress it.
