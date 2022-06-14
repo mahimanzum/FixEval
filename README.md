@@ -4,7 +4,7 @@
 
 - [Table of Contents] (#table-of-contents)
     - [Folder Structure] (#folder-structure)
-
+    - [AVATAR](#AVATAR)
 ## Folder Structure 
 ```
 ├── README.md 
