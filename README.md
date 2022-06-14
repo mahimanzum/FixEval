@@ -283,7 +283,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
         <tr>
             <td rowspan=2> Naive Copy </td>
             <td> Java</td>
-            <td rowspan=2, align ="center"> No</td>
+            <td align ="center", rowspan=2> No</td>
             <td>80.28</td>
             <td>0.03</td>
             <td>84.22</td>
@@ -302,7 +302,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
         </tr>
         <tr>
             <td rowspan=4> PLBART </td>
-            <td>Java</td>
+            <td align ="center", rowspan=2>Java</td>
             <td>No</td>
             <td>58.49</td>
             <td>0.45</td>
@@ -312,7 +312,6 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
             <td>31.36</td>
         </tr>
         <tr>
-            <td>Java</td>
             <td>Yes</td>     
             <td>59.84</td>
             <td>1.46</td>
@@ -322,7 +321,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
             <td>33.04</td>
         </tr>
         <tr>
-            <td>Python</td>
+            <td align ="center", rowspan=2>Python</td>
             <td>No</td> 
             <td>61.89</td>
             <td>2.32</td>
@@ -332,7 +331,6 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
             <td>91.16</td>
         </tr>
         <tr>
-            <td>Python</td>
             <td>Yes</td>
             <td>62.25</td>
             <td>2.46</td>
@@ -343,7 +341,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
         </tr>
         <tr>
             <td rowspan=4> CodeT5 </td>
-            <td>Java</td>
+            <td align ="center", rowspan=2>Java</td>
             <td>No</td>
             <td>62.31</td>
             <td>2.96</td>
@@ -353,7 +351,6 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
             <td>63.03</td>
         </tr>
         <tr>
-            <td>Java</td>
             <td>Yes</td>
             <td>62.54</td>
             <td>2.45</td>
@@ -363,7 +360,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
             <td>64.23</td>
         </tr>
         <tr>
-            <td>Python</td>
+            <td align ="center", rowspan=2>Python</td>
             <td>No</td>
             <td>64.92</td>
             <td>2.74</td>
@@ -373,7 +370,6 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
             <td>92.80</td>
         </tr>
         <tr>
-            <td>Python</td>
             <td>Yes</td>
             <td>64.67</td>
             <td>2.97</td>
@@ -410,7 +406,7 @@ We also evaluate our model on pass@k and test case average. Here are the benckma
     </thead>
     <tbody>
         <tr>
-            <td>Java</td>
+            <td align ="center", rowspan=2>Java</td>
             <td>No</td>
             <td>8.65</td>
             <td>15.62</td>
@@ -422,7 +418,6 @@ We also evaluate our model on pass@k and test case average. Here are the benckma
             <td>29.60</td>
         </tr>
         <tr>
-            <td>Java</td>
             <td>Yes</td> 
             <td>10.94</td>
             <td>18.77</td>
@@ -434,7 +429,7 @@ We also evaluate our model on pass@k and test case average. Here are the benckma
             <td>32.90</td>
         </tr>
         <tr>
-            <td>Python</td>
+            <td align ="center", rowspan=2>Python</td>
             <td>No</td> 
             <td>6.86</td>
             <td>13.07</td>
@@ -446,7 +441,6 @@ We also evaluate our model on pass@k and test case average. Here are the benckma
             <td>35.20</td>
         </tr>
         <tr>
-            <td>Python</td>
             <td>Yes</td> 
             <td>7.32</td>
             <td>13.94</td>
