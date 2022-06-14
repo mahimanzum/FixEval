@@ -178,12 +178,12 @@ Also contains 6 raw test files for training.  <br>
 ## Training and Evaluation
 
 #### Training the model and evaluating on the dataset
-To run the codet5 model go to that folder and use run.sh. This will also evalualte the model on execution_evaluation, BLEU, CodeBleu, Syntax match dataflow match all at the same time.
+To run the codet5 model go to that folder and use the run.sh script file. This will also evalualte the model on match based metrics(BLEU, CodeBleu, Syntax match dataflow match etc.).
 some changes are required in run.sh. <br>
 Change source and target languages online 14-15-> from these ['java', 'python'] <br>
 Change path_2_data line 22 at the end folder name as 'processed' or processed_with_verdict <br>
 Change Line 27 , Model and Cached data save directory to be consistent with the data as well. Append "_with_verdict" if associated data path contains "_with_verdict" as well. <br>
-To just evaluate comment the train function in the bottom of the run.sh file
+To just evaluate comment the train function in the bottom of the run.sh file <br>
 
 Each run.sh files have similar structure
 
@@ -213,8 +213,8 @@ nohup ./run.sh 0 python python codenet false
 nohup ./run.sh 0 python python codenet true
 ```
 The run.sh for each of the model folders contain 3 function. <br>
-train -> Trains that specific model and saves the checkpoints and logs all the necessary matrices
-evaluate -> loades a pretrained model (usually the checkpoint-best-ppl) model and Evaluates all the usual matrices except the execution based evaluation with pass@k accuracy. <br>
+train -> Trains that specific model and saves the checkpoints and logs all the necessary matrices. <br>
+evaluate -> Loads a pretrained model (usually the checkpoint-best-ppl) model and Evaluates all the usual metrics except the execution based evaluation with pass@k accuracy. <br>
 generate -> Loads a pretrained model (usually the checkpoint-best-ppl) and generates a json file with the predictions from the loaded model.
 
 ## Evaluation
@@ -234,14 +234,19 @@ python generate_eval_files.py --with_verdict True --lang python
 cd ../
 ```
 
-#### Lets generate the test file
+#### Lets generate the file with the model predictions
 Just go to that specific model folder and execute the run.sh command with only generate function uncommented and save_dir, path_2_data, and languages set to the correct versions. for example
 ```
 cd plbart/
 ./run.sh
 ```
+For using our opensourced pretrained Models Download plbart.zip or codeT5.zip from this link and verify the results using the same procedure.
+```
+https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
+```
 
-#### pre-preprocess the test file that contains all tokenized and detokenized source , target and prediction on all beam size
+
+#### pre-preprocess the generated file that contains all tokenized and detokenized source, target and predictions
 
 First We need to create a self contrained json containing all the necessary versions to detokenize the code and execute. We split this portion explicitly because we use ARC(Advanced Research Computing), Virginia Tech for parallel running of these code and installing all the libraries required to tokenize java and python codes is not possible in the ARC supercomputer. So we do it elsewhere and create this self contained json file which can be used to generate results. 
 
