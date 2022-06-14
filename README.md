@@ -10,199 +10,6 @@ All data for reproducing the results is available Here:
 https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
 ```
 
-<table>
-    <thead>
-        <tr>
-            <th>Method</th>
-            <th>Language</th>
-            <th>Verdict</th>
-            <th>BLEU</th>
-            <th>EM</th>
-            <th>SM</th>
-            <th>DM</th>
-            <th>CB</th>
-            <th>CA</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td rowspan=2> Naive Copy </td>
-            <td> Java</td>
-            <td> No</td>
-            <td>80.28</td>
-            <td>0.03</td>
-            <td>84.22</td>
-            <td>53.64</td>
-            <td>75.43</td>
-            <td>89.93</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>No</td>
-            <td>68.55</td>
-            <td>0.73</td>
-            <td>70.12</td>
-            <td>60.51</td>
-            <td>68.47</td>
-            <td>96.56</td>
-        </tr>
-        <tr>
-            <td rowspan=4> PLBART </td>
-            <td>Java</td>
-            <td>No</td>
-            <td>58.49</td>
-            <td>0.45</td>
-            <td>66.92</td>
-            <td>43.08</td>
-            <td>57.23</td>
-            <td>31.36</td>
-        </tr>
-        <tr>
-            <td>Java</td>
-            <td>Yes</td>     
-            <td>59.84</td>
-            <td>1.46</td>
-            <td>68.01</td>
-            <td>44.99</td>
-            <td>58.62</td>
-            <td>33.04</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>No</td> 
-            <td>61.89</td>
-            <td>2.32</td>
-            <td>64.32</td>
-            <td>48.81</td>
-            <td>61.13</td>
-            <td>91.16</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>Yes</td>
-            <td>62.25</td>
-            <td>2.46</td>
-            <td>63.31</td>
-            <td>49.73</td>
-            <td>62.21</td>
-            <td>92.21</td>
-        </tr>
-        <tr>
-            <td rowspan=4> CodeT5 </td>
-            <td>Java</td>
-            <td>No</td>
-            <td>62.31</td>
-            <td>2.96</td>
-            <td>74.01</td>
-            <td>52.30</td>
-            <td>63.37</td>
-            <td>63.03</td>
-        </tr>
-        <tr>
-            <td>Java</td>
-            <td>Yes</td>
-            <td>62.54</td>
-            <td>2.45</td>
-            <td>73.93</td>
-            <td>53.29</td>
-            <td>63.71</td>
-            <td>64.23</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>No</td>
-            <td>64.92</td>
-            <td>2.74</td>
-            <td>68.79</td>
-            <td>56.21</td>
-            <td>63.53</td>
-            <td>92.80</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>Yes</td>
-            <td>64.67</td>
-            <td>2.97</td>
-            <td>68.45</td>
-            <td>56.04</td>
-            <td>63.28</td>
-            <td>92.70</td>
-        </tr>
-    </tbody>
-</table>
-
-
-<table>
-    <thead>
-        <tr>
-            <th rowspan=2>Language </th>
-            <th rowspan=2>Verdict</th>
-            <th colspan=4>pass@k</th>
-            <th colspan=4>TCA@k</th>
-        </tr>
-        <tr>
-        <td>k = 1</td>
-        <td>k = 3</td>
-        <td>k = 5</td>
-        <td>k = 10</td>
-        <td>k = 1</td>
-        <td>k = 3</td>
-        <td>k = 5</td>
-        <td>k = 10</td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Java</td>
-            <td>No</td>
-            <td>8.65</td>
-            <td>15.62</td>
-            <td>19.63</td>
-            <td>24.44</td>
-            <td>41.00</td>
-            <td>34.00</td>
-            <td>32.70</td>
-            <td>29.60</td>
-        </tr>
-        <tr>
-            <td>Java</td>
-            <td>Yes</td> 
-            <td>10.94</td>
-            <td>18.77</td>
-            <td>22.66</td>
-            <td>27.96</td>
-            <td>44.99</td>
-            <td>38.80</td>
-            <td>35.87</td>
-            <td>32.90</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>No</td> 
-            <td>6.86</td>
-            <td>13.07</td>
-            <td>16.27</td>
-            <td>20.51</td>
-            <td>50.20</td>
-            <td>41.20</td>
-            <td>38.50</td>
-            <td>35.20</td>
-        </tr>
-        <tr>
-            <td>Python</td>
-            <td>Yes</td> 
-            <td>7.32</td>
-            <td>13.94</td>
-            <td>17.47</td>
-            <td>22.63</td>
-            <td>58.75</td>
-            <td>41.16</td>
-            <td>38.37</td>
-            <td>34.88</td>
-        </tr>
-    </tbody>
-</table>
-
 
 ## Folder Structure 
 ```
@@ -449,3 +256,210 @@ Any of the previous commands will create a json file which will contain all the 
 #### use results.py to get the results 
 We can use results.py to generate the results
 We can also use the previous json in the src/01_preprocessing.ipynb notebook for visualizing.
+
+## Benchmarks
+
+
+#### Match based metrics
+
+We evaluate the models' performances on the test set in terms of Compilation Accuracy (CA), BLEU, Syntax Match (SM), Dataflow Match (DM), CodeBLEU (CB), Exact Match (EM). We report the model performances below.
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Language</th>
+            <th>Verdict</th>
+            <th>BLEU</th>
+            <th>EM</th>
+            <th>SM</th>
+            <th>DM</th>
+            <th>CB</th>
+            <th>CA</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan=2> Naive Copy </td>
+            <td> Java</td>
+            <td> No</td>
+            <td>80.28</td>
+            <td>0.03</td>
+            <td>84.22</td>
+            <td>53.64</td>
+            <td>75.43</td>
+            <td>89.93</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>No</td>
+            <td>68.55</td>
+            <td>0.73</td>
+            <td>70.12</td>
+            <td>60.51</td>
+            <td>68.47</td>
+            <td>96.56</td>
+        </tr>
+        <tr>
+            <td rowspan=4> PLBART </td>
+            <td>Java</td>
+            <td>No</td>
+            <td>58.49</td>
+            <td>0.45</td>
+            <td>66.92</td>
+            <td>43.08</td>
+            <td>57.23</td>
+            <td>31.36</td>
+        </tr>
+        <tr>
+            <td>Java</td>
+            <td>Yes</td>     
+            <td>59.84</td>
+            <td>1.46</td>
+            <td>68.01</td>
+            <td>44.99</td>
+            <td>58.62</td>
+            <td>33.04</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>No</td> 
+            <td>61.89</td>
+            <td>2.32</td>
+            <td>64.32</td>
+            <td>48.81</td>
+            <td>61.13</td>
+            <td>91.16</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>Yes</td>
+            <td>62.25</td>
+            <td>2.46</td>
+            <td>63.31</td>
+            <td>49.73</td>
+            <td>62.21</td>
+            <td>92.21</td>
+        </tr>
+        <tr>
+            <td rowspan=4> CodeT5 </td>
+            <td>Java</td>
+            <td>No</td>
+            <td>62.31</td>
+            <td>2.96</td>
+            <td>74.01</td>
+            <td>52.30</td>
+            <td>63.37</td>
+            <td>63.03</td>
+        </tr>
+        <tr>
+            <td>Java</td>
+            <td>Yes</td>
+            <td>62.54</td>
+            <td>2.45</td>
+            <td>73.93</td>
+            <td>53.29</td>
+            <td>63.71</td>
+            <td>64.23</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>No</td>
+            <td>64.92</td>
+            <td>2.74</td>
+            <td>68.79</td>
+            <td>56.21</td>
+            <td>63.53</td>
+            <td>92.80</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>Yes</td>
+            <td>64.67</td>
+            <td>2.97</td>
+            <td>68.45</td>
+            <td>56.04</td>
+            <td>63.28</td>
+            <td>92.70</td>
+        </tr>
+    </tbody>
+</table>
+
+
+#### Execution based metrics
+
+<table>
+    <thead>
+        <tr>
+            <th rowspan=2>Language </th>
+            <th rowspan=2>Verdict</th>
+            <th colspan=4>pass@k</th>
+            <th colspan=4>TCA@k</th>
+        </tr>
+        <tr>
+        <td>k = 1</td>
+        <td>k = 3</td>
+        <td>k = 5</td>
+        <td>k = 10</td>
+        <td>k = 1</td>
+        <td>k = 3</td>
+        <td>k = 5</td>
+        <td>k = 10</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Java</td>
+            <td>No</td>
+            <td>8.65</td>
+            <td>15.62</td>
+            <td>19.63</td>
+            <td>24.44</td>
+            <td>41.00</td>
+            <td>34.00</td>
+            <td>32.70</td>
+            <td>29.60</td>
+        </tr>
+        <tr>
+            <td>Java</td>
+            <td>Yes</td> 
+            <td>10.94</td>
+            <td>18.77</td>
+            <td>22.66</td>
+            <td>27.96</td>
+            <td>44.99</td>
+            <td>38.80</td>
+            <td>35.87</td>
+            <td>32.90</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>No</td> 
+            <td>6.86</td>
+            <td>13.07</td>
+            <td>16.27</td>
+            <td>20.51</td>
+            <td>50.20</td>
+            <td>41.20</td>
+            <td>38.50</td>
+            <td>35.20</td>
+        </tr>
+        <tr>
+            <td>Python</td>
+            <td>Yes</td> 
+            <td>7.32</td>
+            <td>13.94</td>
+            <td>17.47</td>
+            <td>22.63</td>
+            <td>58.75</td>
+            <td>41.16</td>
+            <td>38.37</td>
+            <td>34.88</td>
+        </tr>
+    </tbody>
+</table>
+
+## License
+
+## Citation
