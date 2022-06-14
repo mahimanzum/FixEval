@@ -143,7 +143,7 @@ unzip processed.zip
 cd ../
 ```
 
-#### Split The Data (Skip this if you want to run from our preprocessed files)
+#### Split The Data (Skip this if you want to continue from our preprocessed files)
 split.py merges all the json chunks, deduplicates using jaccard similarity function and splits the data in train-valid-test (80-10-10) ratio on problem level so that no datapoints for a single problem exists in multiple splits like train and test. During the split We also mantaining the condition that for all the datapoints in valid and test set we have the test cases available so that execution based evaluation can be done in both valid and test set. 
 ```
 cd src
