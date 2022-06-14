@@ -25,18 +25,21 @@
 
 ## Folder Structure 
 ```
-├── README.md 
-├── third_party 
+
 ├── codet5
 │   ├── run.sh 
 │   ├── configs.py
 │   ├── models.py
-│   └── run_gen.py
+│   ├── run_gen.py
+│   └── ...
+│ 
 ├── plbart
 │   ├── run.sh 
 │   ├── configs.py
 │   ├── models.py
-│   └── run_gen.py
+│   ├── run_gen.py
+│   └── ...
+│
 ├── data
 │   ├── java
 │   │    ├──jsons
@@ -46,6 +49,7 @@
 │   │    ├──processed
 │   ├── atcoder_test_cases
 │   └── processed.json
+│
 ├── third_party
 │   ├── apex
 │   ├── fairseq
@@ -60,14 +64,17 @@
 │   ├── compile.py
 │   ├── compute_ca.py
 │   ├── evaluator.py
-│   └── execution_evaluation_TC_arc_MP.py
+│   ├── execution_evaluation_TC_arc_MP.py
+│   └── ...
+│
 └── src
     ├── make_submission_list_json.py
     ├── process_json.py
     ├── deduplication.py
     ├── generate_eval_files.py
     ├── merge.py
-    └── split.py
+    ├── split.py
+    └── ...
 ```
 
 ## Dataset
