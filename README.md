@@ -6,7 +6,7 @@
 - [Folder Structure](#folder-structure)
 - [Dataset](#dataset)
     - [Download Codenet Metadata](#download-codenet-metadata)
-        - [Download Test Cases](#download-test-cases)
+    - [Download Test Cases](#download-test-cases)
 - [Installation](#installation)
 - [Pre-processing ](#pre-processing-skip-this-if-you-want-to-run-from-our-preprocessed-files)
     - [Split The Data](#split-the-data-skip-this-if-you-want-to-run-from-our-preprocessed-files)
