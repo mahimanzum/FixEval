@@ -1,15 +1,15 @@
 # Computational Accuracy
 
-Computational Accuracy (CA) refers to the fraction of translated functions that successfully pass a suit of test cases.
+Computational Accuracy (CA) refers to the fraction of translated functions that successfully pass a suite of test cases.
 
-In order to evaluate computation accuracies of CodeBERT, GraphCodeBERT, and PLBART, we fine-tune them on 
+In order to evaluate the computational accuracy of CodeBERT, GraphCodeBERT, and PLBART, we fine-tune them on the 
 **AVATAR-g4g-functions** dataset and perform the evaluation on the `GeeksforGeeks` dataset proposed in 
-[Lachaux et al., 2020](https://arxiv.org/pdf/2006.03511.pdf). Note that, all the evaluation results reported here are 
-based on the test split of the `GeeksforGeeks` dataset proposed in Lachaux et al., 2020 which is included in this 
-[folder](https://github.com/wasiahmad/AVATAR/tree/main/data/transcoder_test_gfg).
+[Lachaux et al., 2020](https://arxiv.org/pdf/2006.03511.pdf). Note that all the evaluation results reported here are 
+based on the test split of the `GeeksforGeeks` dataset proposed in [Lachaux et al., 2020], which is included in 
+[this repository](https://github.com/wasiahmad/AVATAR/tree/main/data/transcoder_test_gfg).
 
 **What is AVATAR-g4g-functions?** AVATAR is a parallel corpus of programs. We use the programs collected from 
-GeeksforGeeks and extract the standalone functions from them and create a parallel corpus of Java-Python functions.
+`GeeksforGeeks` and extract the standalone functions from them to create a parallel corpus of Java-Python functions.
  
 
 ### Example
@@ -222,9 +222,9 @@ bash run.sh python java plbart-multilingual;
     </tbody>
 </table>  
 
-- We categorize the errors into Compilation and Runtime errors. Check details 
-[here](https://github.com/wasiahmad/AVATAR/blob/main/evaluation/TransCoder/classify_errors.py).
-- Compilation and Runtime errors (in %) made by the models are reported below.
+- We categorize the errors into Compilation and Runtime errors. Check 
+[here](https://github.com/wasiahmad/AVATAR/blob/main/evaluation/TransCoder/classify_errors.py) for more details.
+- Compilation and Runtime errors (in %) for each model are reported below.
 
 <table>
     <thead>
@@ -301,7 +301,7 @@ bash run.sh python java plbart-multilingual;
 </table> 
 
 - Computational Accuracy (CA) is defined as `Success / #tests`.
-- PLBART<sub>mono</sub> outperforms all the baselines in terms of all the evaluation metrics.
+- PLBART<sub>mono</sub> outperforms all the baselines in terms of the evaluation metrics.
 
 <table>
     <thead>
