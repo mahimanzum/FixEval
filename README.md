@@ -3,14 +3,12 @@
 Source code repositories consist of large codebases, often containing error-prone
 programs. The increasing complexity of software has led to a drastic rise in
 time and costs for identifying and fixing these defects. Various methods exist to
-automatically generate fixes for buggy code. However, due to the large combi-
-natorial space of possible solutions for a particular bug, there are not many tools
+automatically generate fixes for buggy code. However, due to the large combinatorial space of possible solutions for a particular bug, there are not many tools
 and datasets available to evaluate generated code effectively. In this work, we
-introduce FIXEVAL, a benchmark comprising buggy code submissions to com-
-petitive programming problems and their respective fixes. We introduce a rich
+introduce FIXEVAL, a benchmark comprising buggy code submissions to competitive programming problems and their respective fixes. We introduce a rich
 test suite to evaluate and assess the correctness of model-generated program fixes.
-We consider two Transformer language models pretrained on programming lan-
-guages as our baselines, and compare them using match-based and execution-based
+We consider two Transformer language models pretrained on programming languages
+as our baselines, and compare them using match-based and execution-based
 evaluation metrics. Our experiments show that match-based metrics do not reflect
 model-generated program fixes accurately, while execution-based methods evaluate
 programs through all cases and scenarios specifically designed for that solution.
@@ -22,21 +20,21 @@ fixing and model-generated code evaluation.
 - [Table of Contents](#table-of-contents)
 - [Folder Structure](#folder-structure)
 - [Dataset](#dataset)
-    - [Download Codenet Metadata](#download-codenet-metadata)
+    - [Download CodeNet Metadata](#download-codenet-metadata)
     - [Download Test Cases](#download-test-cases)
 - [Installation](#installation)
 - [Pre-processing ](#pre-processing-skip-this-if-you-want-to-run-from-our-preprocessed-files)
     - [Split The Data](#split-the-data-skip-this-if-you-want-to-continue-from-our-preprocessed-files)
 - [Download Preprocessed Data](#download-preprocessed-data)
-    - [Download our preprocessed java dataset](#download-and-unzip-our-preprocessed-java-dataset)
-    - [Download our preprocessed python dataset](#download-and-unzip-our-preprocessed-python-dataset)
+    - [Download our preprocessed Java dataset](#download-and-unzip-our-preprocessed-java-dataset)
+    - [Download our preprocessed Python dataset](#download-and-unzip-our-preprocessed-python-dataset)
 - [Training and Evaluation](#training-and-evaluation)
     - [Training](#training-the-model-and-evaluating-on-the-dataset)
     - [Evaluation](#evaluation)
     - [Evaluate on Execution](#evaluate-on-execution)
 - [Benchmarks](#benchmarks)
-    - [Match based metrics](#match-based-metrics)
-    - [Execution based metrics](#execution-based-metrics)
+    - [Match-based metrics](#match-based-metrics)
+    - [Execution-based metrics](#execution-based-metrics)
 - [License](#license)
 - [Citation](#citation)
 
@@ -103,14 +101,14 @@ https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sha
 
 Run the following commands in the root folder.
 
-#### Download Project Codenet Dataset (Skip this if you want to run from our preprocessed files)
-Run this command to download the whole codenet dataset (around 8GB zip file) in the root directory and decompress it.
+#### Download Project CodeNet Dataset (Skip this if you want to run from our preprocessed files)
+Run this command to download the whole CodeNet dataset (around 8GB zip file) in the root directory and decompress it.
 ```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet.tar.gz
 tar -xf Project_CodeNet.tar.gz
 ```
-#### Download Codenet Metadata
-Run this command to download the codenet metadata (281Mb zip file) in the root directory and decompress it
+#### Download CodeNet Metadata
+Run this command to download the CodeNet metadata (281Mb zip file) in the root directory and decompress it
 ```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet_metadata.tar.gz
 tar -xf Project_CodeNet_metadata.tar.gz
