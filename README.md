@@ -1,4 +1,20 @@
 ## FixEval: Execution-based Evaluation of Program Fixes for Competitive Programming Problems
+Abstract: Source code repositories consist of large codebases, often containing error-prone
+programs. The increasing complexity of software has led to a drastic rise in
+time and costs for identifying and fixing these defects. Various methods exist to
+automatically generate fixes for buggy code. However, due to the large combi-
+natorial space of possible solutions for a particular bug, there are not many tools
+and datasets available to evaluate generated code effectively. In this work, we
+introduce FIXEVAL, a benchmark comprising buggy code submissions to com-
+petitive programming problems and their respective fixes. We introduce a rich
+test suite to evaluate and assess the correctness of model-generated program fixes.
+We consider two Transformer language models pretrained on programming lan-
+guages as our baselines, and compare them using match-based and execution-based
+evaluation metrics. Our experiments show that match-based metrics do not reflect
+model-generated program fixes accurately, while execution-based methods evaluate
+programs through all cases and scenarios specifically designed for that solution.
+Therefore, we believe FIXEVAL provides a step towards real-world automatic bug
+fixing and model-generated code evaluation.
 
 ## Table of Contents
 
