@@ -336,7 +336,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
         <tr>
             <td rowspan=2> Naive Copy </td>
             <td> Java</td>
-            <td align ="center", rowspan=2> No</td>
+            <td>No</td>
             <td>80.28</td>
             <td>0.03</td>
             <td>84.22</td>
@@ -346,6 +346,7 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
         </tr>
         <tr>
             <td>Python</td>
+            <td>No</td>
             <td>68.55</td>
             <td>0.73</td>
             <td>70.12</td>
