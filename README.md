@@ -9,7 +9,7 @@
     - [Download Test Cases](#download-test-cases)
 - [Installation](#installation)
 - [Pre-processing ](#pre-processing-skip-this-if-you-want-to-run-from-our-preprocessed-files)
-    - [Split The Data](#split-the-data-skip-this-if-you-want-to-run-from-our-preprocessed-files)
+    - [Split The Data](#split-the-data-skip-this-if-you-want-to-continue-from-our-preprocessed-files)
 - [Download Preprocessed Data](#download-preprocessed-data)
     - [Download our preprocessed java dataset](#download-and-unzip-our-preprocessed-java-dataset)
     - [Download our preprocessed python dataset](#download-and-unzip-our-preprocessed-python-dataset)
@@ -78,21 +78,21 @@
 ```
 
 ## Dataset
-All data for reproducing the results is available Here:
+All data for reproducing the results is available here:
 ```
 https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
 ```
 
-Run all these commands into the root folder 
+Run the following commands in the root folder.
 
 #### Download Project Codenet Dataset (Skip this if you want to run from our preprocessed files)
-Run this command to download the whole codenet dataset(Around 8GB zipped file) in the root directory and decompress it.
+Run this command to download the whole codenet dataset (around 8GB zip file) in the root directory and decompress it.
 ```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet.tar.gz
 tar -xf Project_CodeNet.tar.gz
 ```
 #### Download Codenet Metadata
-Run this command to download codenet Metadata (281Mb zip file) in the root directory and decompress it
+Run this command to download the codenet metadata (281Mb zip file) in the root directory and decompress it
 ```
 wget https://dax-cdn.cdn.appdomain.cloud/dax-project-codenet/1.0.0/Project_CodeNet_metadata.tar.gz
 tar -xf Project_CodeNet_metadata.tar.gz
@@ -100,35 +100,36 @@ tar -xf Project_CodeNet_metadata.tar.gz
 
 
 #### Download Test Cases 
-Make the data folder to store the test cases, along with java , python data files.
+Make the data folder to store the test cases along with the Java and Python data files.
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1AInTHzaZqym7WsT1B7yc8nZy7dA3ovPf' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1AInTHzaZqym7WsT1B7yc8nZy7dA3ovPf" -O atcoder_test_cases.zip && rm -rf /tmp/cookies.txt
 unzip atcoder_test_cases.zip
 cd ../
 ```
+
 ## Installation
 
-Best way is to run this command(You may need to change the bash file to change your preferance on environment names etc.)
+The preferred installation method is to run this command (You may need to change the bash file to update the environment names, etc.):
 ```
 bash install_env.sh
 ```
 
-Another way will be( You may need to manually add some libraries): 
+Another method is to run the following (You may need to manually add some libraries): 
 ```
 conda env create -n python -f src/environment.yml
 conda activate python36
 ```
-All the commands below assumes that you installed everything on this environment correctly and activate the environment. 
+All the commands below assume that you installed everything in this environment correctly and activated the environment. 
 
 ## Pre-processing (Skip this if you want to run from our preprocessed files)
-src/make_submission_list_json.py parses problem submission informations, problem list csv, and the actual submission files folder to create an initial json processed.json which is a format like this.
+`src/make_submission_list_json.py` parses problem submission information, problem list csv, and the actual submission files folder to create an initial json, `processed.json`, which uses the following format:
 
-processed is a dictionary containing a list of user_id's containing information about each user processed.keys(). <br>
-processed['user_id'] is a list containing a list of problem_id's solved by that user. <br>
-processed['user_id']['problem_id'] contains list of tuples. Each tuple consists of information about a submission (submission_id,date,language,original_language,filename_ext,status) <br>
+`processed` is a dictionary containing a list of user_id's with information about each user in `processed.keys()`. <br>
+`processed['user_id']` is a list containing a list of problem_id's solved by that user. <br>
+`processed['user_id']['problem_id']` contains list of tuples. Each tuple consists of information about a submission (submission_id,date,language,original_language,filename_ext,status) <br>
 
 
-to create this(May need to change the path informations):
+To create this, use the followint script (You may need to change the path information):
 ```
 cd src
 python make_submission_list_json.py
@@ -136,13 +137,14 @@ cd ../
 ```
 
 #### Create Language Specific Data (Skip this part if you just want to download our version)
-We use the 'processed.json' file to create the training data chunk by chunk(10k per file) and store them in the data folder in individual language folders. The same code preprocesses and stores both java and python data in json format in folders named data/{language}/jsons/.
+We use the `processed.json` file to create the training data chunk by chunk (10k per file) and store them in the data folder for individual programming languages. The following code preprocesses and stores both Java and Python data into the json format in folders stored at `data/{language}/jsons/`.
 ```
 cd src
 python process_json.py
 cd ../
 ```
-Or you can also download "processed.json" file which is kind of the root file for all data generation and processing. 
+
+Or, you can also download the `processed.json` file, which is the root file for all data generation and processing: 
 ```
 cd data/
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1gxZYObARqJytI9gf6gEX-CZhCpc4JPE6' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1gxZYObARqJytI9gf6gEX-CZhCpc4JPE6" -O processed.zip && rm -rf /tmp/cookies.txt
@@ -151,7 +153,7 @@ cd ../
 ```
 
 #### Split The Data (Skip this if you want to continue from our preprocessed files)
-split.py merges all the json chunks, deduplicates using jaccard similarity function and splits the data in train-valid-test (80-10-10) ratio on problem level so that no datapoints for a single problem exists in multiple splits like train and test. During the split We also mantaining the condition that for all the datapoints in valid and test set we have the test cases available so that execution based evaluation can be done in both valid and test set. 
+`split.py` merges all the json chunks, deduplicates using jaccard similarity function, and splits the data into the train-valid-test (80-10-10) ratio. This is done on the problem level so that no datapoints for a single problem exist in multiple splits, like train and test. During the split, we also mantain the condition that for all the datapoints in the valid and test sets- we have the test cases available so that execution-based evaluation can be done on both the valid and test set data. 
 ```
 cd src
 python split.py 
@@ -160,57 +162,59 @@ cd ../
 ```
 
 ## Download Preprocessed Data 
-Run these commands if you just want to download the processed data and train
-#### Download and unzip our preprocessed java dataset 
+Run the following commands if you want to download the processed data and train:
+
+#### Download and unzip our preprocessed Java dataset 
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1vsuUrJ2j86EYGb2WWQatqsqJ-V8Sl6en' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1vsuUrJ2j86EYGb2WWQatqsqJ-V8Sl6en" -O java.zip && rm -rf /tmp/cookies.txt
 unzip java.zip
 ```
-#### Download and unzip our preprocessed python dataset 
+#### Download and unzip our preprocessed Python dataset 
 ```
 wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1rjjYW8SB8f5Hr34ig84OKpNYOzdt03Ar' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1rjjYW8SB8f5Hr34ig84OKpNYOzdt03Ar" -O python.zip && rm -rf /tmp/cookies.txt
 unzip python.zip
 ```
-After successfull completion till this part we have 4 datasets.  <br>
-java buggy to java fixed in, (data/java/processed/) <br>
-java buggy with verdict information to java fixed in (data/java/processed_with_verdict/)<br>
-python buggy code to python fixed code in (data/python/processed/)<br>
-python buggy code with verdict information to python fixed code in (data/python/processed_with_verdict/)<br>
+After successful completion, we derive 4 datasets from this part:  <br>
+* java buggy code to java fixed code (`data/java/processed/`) <br>
+* java buggy code with verdict information to java fixed code (`data/java/processed_with_verdict/`)<br>
+* python buggy code to python fixed code (`data/python/processed/`)<br>
+* python buggy code with verdict information to python fixed code in (`data/python/processed_with_verdict/`)<br>
 
-All of these 4 folders contain {train, test, eval}.jsonl file containing all the information for the datapoints so the we can always reverse back to the original data <br>
-contains {train, valid, test}.{language-language}.id files where language is [java, python] <br>
-Also contains 6 raw test files for training.  <br>
-{src, tgt}_{train, valid, test}.{language-language}.language
+Each of these 4 directories contains:
+* `{train, test, eval}.jsonl` files containing all the information for the datapoints. This also allows us to always revert back to the original dataset <br>
+* `{train, valid, test}.{language-language}.id` files, where language is in the set [java, python] <br>
+* 6 raw test files for training.  <br>
+* `{src, tgt}_{train, valid, test}.{language-language}.language`
 
 ## Training and Evaluation
 
 #### Training the model and evaluating on the dataset
-To run the codet5 model go to that folder and use the run.sh script file. This will also evalualte the model on match based metrics(BLEU, CodeBleu, Syntax match dataflow match etc.).
-some changes are required in run.sh. <br>
-Change source and target languages online 14-15-> from these ['java', 'python'] <br>
-Change path_2_data line 22 at the end folder name as 'processed' or processed_with_verdict <br>
-Change Line 27 , Model and Cached data save directory to be consistent with the data as well. Append "_with_verdict" if associated data path contains "_with_verdict" as well. <br>
-To just evaluate comment the train function in the bottom of the run.sh file <br>
+To run the codet5 model, go to the `codet5` folder and use the `run.sh` script file. This will also evalualte the model on match-based metrics (BLEU, CodeBleu, Syntax Match, Dataflow Match, etc.).
+Some changes are required to execute the `run.sh` script: <br>
+* Change the source and target languages on lines 14-15 to one of these ['java', 'python'] <br>
+* Change `path_2_data` at the end of line 22 to the folder name with the processed or processed_with_verdict data <br>
+* Change line 27 to make the Model and Cached data save directory consistent with the data as well. For example, append "\_with_verdict" if the associated data path contains "\_with_verdict" as well. <br>
+To simply run the evaluation, comment out the train function in the bottom of the `run.sh` file <br>
 
-Each run.sh files have similar structure
+Each `run.sh` file has a similar structure:
 
 ```
 ./run.sh GPU_ID SRC_LANGUAGE TARGET_LANGUAGE DATA_SOURCE WITH_VERDICT
 ```
 
-GPU_ID is basically how many gpus you want to use for single GPU it's usually "0". <br>
-SRC_LANGUAGE, TARGET_LANGUAGE both are usually same for a single run. Both can be either "java" or "python"
-DATA_SOURCE is "codenet" because stored the preprocessed datra named "codenet". It can be anything
-WITH_VERDICT can be either "true" or "false" which means if we want to use the verdict information in the input or not.
+`GPU_ID` is how many GPUs you want to use. For single GPU, input "0". <br>
+`SRC_LANGUAGE`, `TARGET_LANGUAGE` are both the same for a single run. They can be either "java" or "python".<br>
+`DATA_SOURCE` is the location of the preprocessed data. For example, "`codenet`" if the stored preprocessed data folder is named "codenet".<br>
+`WITH_VERDICT` can be either "true" or "false" depending on if you want to use the verdict information in the input or not.
 ```
 cd codet5/
-nohup ./run.sh 0 java java codenet false
-nohup ./run.sh 0 java java codenet true
-nohup ./run.sh 0 python python codenet false
+nohup ./run.sh 0 java java codenet false #TODO Briefly explain one or all of these examples i.e.:
+nohup ./run.sh 0 java java codenet true #Executes the Java dataset with one GPU and verdict information
+nohup ./run.sh 0 python python codenet false #Executes the Python dataset with one GPU and without verdict information
 nohup ./run.sh 0 python python codenet true
 ```
 
-Similarly for training and evaluating plbart model go to the root directory and run these.
+Similarly, for training and evaluating the plbart model, navigate to the root directory and use the following:
 
 ```
 cd plbart/
@@ -219,18 +223,18 @@ nohup ./run.sh 0 java java codenet true
 nohup ./run.sh 0 python python codenet false
 nohup ./run.sh 0 python python codenet true
 ```
-The run.sh for each of the model folders contain 3 function. <br>
-train -> Trains that specific model and saves the checkpoints and logs all the necessary matrices. <br>
-evaluate -> Loads a pretrained model (usually the checkpoint-best-ppl) model and Evaluates all the usual metrics except the execution based evaluation with pass@k accuracy. <br>
-generate -> Loads a pretrained model (usually the checkpoint-best-ppl) and generates a json file with the predictions from the loaded model.
+The `run.sh` script for each of the models contains 3 function: <br>
+* `train` -> Trains that specific model and saves the checkpoints and logs all the necessary matrices. <br>
+* `evaluate` -> Loads a pretrained model (usually the checkpoint-best-ppl) model and evaluates all metrics except the execution-based evaluation with pass@k accuracy. <br>
+* `generate` -> Loads a pretrained model (usually the checkpoint-best-ppl) and generates a json file with the predictions from the loaded model.
 
 ## Evaluation
 #### Evaluate on Execution 
-This part is not included in the usual evaluation because changes are requires based on system to run this efficiently. <br>
+This part is not included in the usual evaluation because changes are required based on your system to run this efficiently. <br>
 
-First run these commands. These commands will create additional 4 splits in the 4 core data folders in data/language/{processed, processed_with_verdict} named eval which similar to train , valid and test but smaller.
-The main difference between eval and test set is that {train, test, valid} are created using our split method and all the datapoints ar split between these. <br>
-But here we create eval split which is sampled from the test datapoints using generate_eval_files.py keeping the true data distribution similar to the test file but smaller(500 in our case) just to make the runtime and computational complexity in check as we need to generate multiple submissions and run each of them in many test cases to calculate our pass@k accuracy.
+First, run the below commands. These commands will create 4 additional splits in the 4 core data folders (`data/language/{processed, processed_with_verdict}`) named `eval` which are similar to `train`, `valid`, and `test` but smaller.
+The main difference between eval and test set is that `{train, test, valid}` are created using our split method and all the datapoints are split between these. <br>
+But here we create an eval split which is sampled from the test datapoints using `generate_eval_files.py`, keeping the true data distribution similar to the test file but on a smaller scale (500 in our case) to keep the runtime and computational complexity in check as we need to generate multiple submissions and run each of them with many test cases to calculate our pass@k accuracy.
 
 ```
 cd src/
@@ -241,21 +245,21 @@ python generate_eval_files.py --with_verdict True --lang python
 cd ../
 ```
 
-#### Lets generate the file with the model predictions
-Just go to that specific model folder and execute the run.sh command with only generate function uncommented and save_dir, path_2_data, and languages set to the correct versions. for example
+#### Let's generate the file with the model predictions
+Go to the specific model folder and execute the `run.sh` command with only the `generate` function uncommented and `save_dir`, `path_2_data`, and `languages` set to the correct versions. For example:
 ```
 cd plbart/
 ./run.sh
 ```
-For using our opensourced pretrained Models Download plbart.zip or codeT5.zip from this link and verify the results using the same procedure.
+To use our open sourced pretrained models, download plbart.zip or codeT5.zip from the link below and verify the results using the same procedure.
 ```
 https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
 ```
 
 
-#### pre-preprocess the generated file that contains all tokenized and detokenized source, target and predictions
+#### Pre-preprocess the generated files that contains all tokenized and detokenized source, target, and predictions
 
-First We need to create a self contrained json containing all the necessary versions to detokenize the code and execute. We split this portion explicitly because we use ARC(Advanced Research Computing), Virginia Tech for parallel running of these code and installing all the libraries required to tokenize java and python codes is not possible in the ARC supercomputer. So we do it elsewhere and create this self contained json file which can be used to generate results. 
+First, we need to create a self-contained json with all of the necessary versions to detokenize the code and execute. We split this portion explicitly because it is not possible to run the code and install all the libraries required to tokenize the Java and Python programs using the ARC (Advanced Research Computing) supercomputer at Virginia Tech. Thus, we do it elsewhere and create the resulting json file which can be used to generate results. 
 
 ```
 cd src/
@@ -265,34 +269,35 @@ python merge.py --references data/python/processed/generation.json --language py
 python merge.py --references data/python/processed_with_verdict/generation.json --language python
 cd ../
 ```
-These will create 4 json files. You might need to change the output file names just for clarification.
+These will create 4 json files. You may need to change the output file names for your own clarification.
 
-#### Finally lets run the code to execute and evaluate
-First we expect the "test cases folder" and the "problem_list.csv" file is in the root directory so lets copy those. <br>
+#### Finally, let's run the code to execute and evaluate
+First, we expect the test cases folder and the "`problem_list.csv`" file to be in the root directory. So let's copy those: <br>
 
 ```
 cp -r data/atcoder_test_cases atcoder_test_cases
 cp Project_CodeNet/metadata/problem_list.csv problem_list.csv 
 ```
-Now lets run the Execute and evaluate method
+Now, let's run the `execute` and `evaluate` methods:
 ```
 python evaluation/execution_evaluation_TC_arc_MP.py --references test_python2python_with_verdict_output.jsonl --language python --test_cases atcoder_test_cases --problem_list problem_list.csv
 ```
-To run on arc We provide a file for using in slurm clusters where you might need to change some credectials.
+To run on ARC, we provide a file for using in slurm clusters where you might need to change your credentials.
 ```
 sbatch batch_run.sh
 ```
-Any of the previous commands will create a json file which will contain all the fields necessary for visualizing and getting pass@k accuracy.
-#### use results.py to get the results 
-We can use results.py to generate the results
-We can also use the previous json in the src/01_preprocessing.ipynb notebook for visualizing.
+The previous commands will create a json file which contains all the fields necessary for visualizing and getting pass@k accuracy.
+
+#### Use results.py to get the results 
+We can use `results.py` to generate the results.
+We can also use the previous json in the `src/01_preprocessing.ipynb` notebook for visualizing.
 
 ## Benchmarks
 
 
-#### Match based metrics
+#### Match-based metrics
 
-We evaluate the models' performances on the test set in terms of Compilation Accuracy (CA), BLEU, Syntax Match (SM), Dataflow Match (DM), CodeBLEU (CB), Exact Match (EM). We report the model performances below.
+We evaluate the models' performances on the test set in terms of Compilation Accuracy (CA), BLEU, Syntax Match (SM), Dataflow Match (DM), CodeBLEU (CB), and Exact Match (EM). We report the model performances below.
 
 
 <table>
@@ -412,8 +417,8 @@ We evaluate the models' performances on the test set in terms of Compilation Acc
 </table>
 
 
-#### Execution based metrics
-We also evaluate our model on pass@k and test case average. Here are the benckmark results. 
+#### Execution-based metrics
+We also evaluate our model using pass@k and test case average. Here are the benckmark results: 
 
 <table>
     <thead>
