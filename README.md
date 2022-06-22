@@ -509,4 +509,10 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
 ## Citation
-Preprint. Under review.
+
+@article{haque2022fixeval,
+  title={FixEval: Execution-based Evaluation of Program Fixes for Competitive Programming Problems},
+  author={Haque, Md Mahim Anjum and Ahmad, Wasi Uddin and Lourentzou, Ismini and Brown, Chris},
+  journal={arXiv preprint arXiv:2206.07796},
+  year={2022}
+}
