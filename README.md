@@ -184,10 +184,10 @@ After successful completion, we derive 4 datasets from this part:  <br>
 * python buggy code with verdict information to python fixed code in (`data/python/processed_with_verdict/`)<br>
 
 Each of these 4 directories contains:
-* `{train, test, eval}.jsonl` files containing all the information for the datapoints. This also allows us to always revert back to the original dataset <br>
-* `{train, valid, test}.{language-language}.id` files, where language is in the set [java, python] <br>
+* `{train, test, valid}.jsonl` files containing all the information for the datapoints. This also allows us to always revert back to the original dataset <br>
+* `{train, test, valid}.{language-language}.id` files, where language is in the set [java, python] <br>
 * 6 raw test files for training.  <br>
-* `{src, tgt}_{train, valid, test}.{language-language}.language`
+* `{src, tgt}_{train, test, valid}.{language-language}.language`
 
 ## Training and Evaluation
 
