@@ -280,6 +280,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     #call single function if jsons are already created
-    #split(args)
+    split(args)
     
     prepare(args)

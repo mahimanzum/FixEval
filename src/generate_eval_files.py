@@ -126,8 +126,8 @@ if __name__ == '__main__':
     parser.add_argument("--lang", type=str, help='Language', default='java')
 
     parser.add_argument("--src_dir", type=str, help='Source directory', default='../data/') #processed_with_verdict
-    #parser.add_argument("--with_verdict", type=bool, help="Name of language",default=False)
+    parser.add_argument("--with_verdict", type=bool, help="Name of language",default=False)
     
     args = parser.parse_args()
     prepare_again(args)
-    #generate(args)
+    generate(args)
