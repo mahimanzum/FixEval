@@ -138,7 +138,10 @@ cd src
 python make_submission_list_json.py
 cd ../
 ```
-
+If there is any file missing Like "my_languages.so" Please check the folder and if it's not there please create an issue. I will make that available ASAP.
+```
+https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
+```
 #### Create Language Specific Data (Skip this part if you just want to download our version)
 We use the `processed.json` file to create the training data chunk by chunk (10k per file) and store them in the data folder for individual programming languages. The following code preprocesses and stores both Java and Python data into the json format in folders stored at `data/{language}/jsons/`.
 ```
