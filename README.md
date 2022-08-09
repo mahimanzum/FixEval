@@ -192,6 +192,18 @@ Each of these 4 directories contains:
 ## Training and Evaluation
 
 #### Training the model and evaluating on the dataset
+#### GPU is required to run the experiments.
+
+```
+To use our open sourced pretrained models and data files, download plbart.zip or codeT5.zip from the link below and verify the results using the same procedure.
+```
+https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
+```
+And then go to that specific folder and run the run.sh command. More instructions later n this page. 
+```
+cd plbart/
+./run.sh
+```
 To run the codet5 model, go to the `codet5` folder and use the `run.sh` script file. This will also evalualte the model on match-based metrics (BLEU, CodeBleu, Syntax Match, Dataflow Match, etc.).
 Some changes are required to execute the `run.sh` script: <br>
 * Change the source and target languages on lines 14-15 to one of these ['java', 'python'] <br>
