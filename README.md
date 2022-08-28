@@ -197,7 +197,6 @@ Each of these 4 directories contains:
 #### Training the model and evaluating on the dataset
 #### GPU is required to run the experiments.
 
-```
 To use our open sourced pretrained models and data files, download plbart.zip or codeT5.zip from the link below and verify the results using the same procedure.
 ```
 https://drive.google.com/drive/folders/1dzuHuouuWzlFCy1CMj9DYG9JGraEay27?usp=sharing
